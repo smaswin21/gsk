@@ -1,0 +1,265 @@
+{
+  "data_path": "sales.xlsx",
+  "feature_columns": [
+    "log_total_6m_sales",
+    "sales_cv",
+    "total_touchpoints_all",
+    "touchpoints_share_a",
+    "touchpoints_share_b",
+    "total_hcps_all",
+    "hcp_share_a",
+    "hcp_share_b",
+    "tp_per_hcp_a",
+    "tp_per_hcp_b",
+    "tp_per_hcp_c"
+  ],
+  "target_columns": [
+    "avg_split_a",
+    "avg_split_b",
+    "avg_split_c"
+  ],
+  "best_c": 0.3,
+  "feature_ranges": {
+    "total_6m_sales": {
+      "min": 35.0,
+      "p05": 496.95000000000005,
+      "median": 1343.0,
+      "p95": 3920.8999999999987,
+      "max": 6716.0
+    },
+    "sales_cv": {
+      "min": 0.020918488014116877,
+      "p05": 0.054359797409547404,
+      "median": 0.17378212778696647,
+      "p95": 0.3510280675317,
+      "max": 0.4908390131926742
+    },
+    "total_touchpoints_all": {
+      "min": 12.0,
+      "p05": 73.5,
+      "median": 410.0,
+      "p95": 1028.3,
+      "max": 1286.0
+    },
+    "touchpoints_share_a": {
+      "min": 0.0,
+      "p05": 0.18599705887296947,
+      "median": 0.41812253480742945,
+      "p95": 0.5660748818055436,
+      "max": 0.7384615365680474
+    },
+    "touchpoints_share_b": {
+      "min": 0.0,
+      "p05": 0.11315752718471432,
+      "median": 0.35321969620046345,
+      "p95": 0.5564263664722539,
+      "max": 0.6329787217208013
+    },
+    "total_hcps_all": {
+      "min": 8.0,
+      "p05": 51.9,
+      "median": 238.0,
+      "p95": 596.3,
+      "max": 734.0
+    },
+    "hcp_share_a": {
+      "min": 0.0,
+      "p05": 0.17170677104408172,
+      "median": 0.4025548561041825,
+      "p95": 0.5198115326594863,
+      "max": 0.7008546978595953
+    },
+    "hcp_share_b": {
+      "min": 0.0,
+      "p05": 0.12219970829624939,
+      "median": 0.3158705688409206,
+      "p95": 0.5264705814617101,
+      "max": 0.5764705848442907
+    }
+  },
+  "presets": {
+    "small": {
+      "total_6m_sales": 669.0,
+      "sales_cv": 0.2174467998733811,
+      "total_touchpoints_all": 314.0,
+      "touchpoints_share_a": 0.3964285700127551,
+      "touchpoints_share_b": 0.4395973146986622,
+      "total_hcps_all": 190.0,
+      "hcp_share_a": 0.4054878036418055,
+      "hcp_share_b": 0.38604650983234184,
+      "touchpoints_share_c": 0.1935483866805411,
+      "hcp_share_c": 0.22999999923333334
+    },
+    "medium": {
+      "total_6m_sales": 1296.0,
+      "sales_cv": 0.165289595673225,
+      "total_touchpoints_all": 364.0,
+      "touchpoints_share_a": 0.3379310333174792,
+      "touchpoints_share_b": 0.3407821219531226,
+      "total_hcps_all": 220.0,
+      "hcp_share_a": 0.3451327418356958,
+      "hcp_share_b": 0.33766233620059594,
+      "touchpoints_share_c": 0.2164179096402317,
+      "hcp_share_c": 0.29936305541806973
+    },
+    "large": {
+      "total_6m_sales": 2440.5,
+      "sales_cv": 0.14148750888791367,
+      "total_touchpoints_all": 687.0,
+      "touchpoints_share_a": 0.4447243266134234,
+      "touchpoints_share_b": 0.28242512483523335,
+      "total_hcps_all": 393.5,
+      "hcp_share_a": 0.4263343418699691,
+      "hcp_share_b": 0.2818320255709946,
+      "touchpoints_share_c": 0.23462403786122848,
+      "hcp_share_c": 0.29842414419969315
+    }
+  },
+  "cv_metrics": [
+    {
+      "dataset": "cross_validation",
+      "indication": "A",
+      "mae": 0.1624,
+      "rmse": 0.2181
+    },
+    {
+      "dataset": "cross_validation",
+      "indication": "B",
+      "mae": 0.0989,
+      "rmse": 0.145
+    },
+    {
+      "dataset": "cross_validation",
+      "indication": "C",
+      "mae": 0.1194,
+      "rmse": 0.1588
+    }
+  ],
+  "holdout_metrics": [
+    {
+      "dataset": "holdout",
+      "indication": "A",
+      "mae": 0.1466,
+      "rmse": 0.1767
+    },
+    {
+      "dataset": "holdout",
+      "indication": "B",
+      "mae": 0.1096,
+      "rmse": 0.1625
+    },
+    {
+      "dataset": "holdout",
+      "indication": "C",
+      "mae": 0.1339,
+      "rmse": 0.1689
+    }
+  ],
+  "benchmark_cv_metrics": [
+    {
+      "dataset": "cross_validation",
+      "indication": "A",
+      "mae": 0.229,
+      "rmse": 0.2979
+    },
+    {
+      "dataset": "cross_validation",
+      "indication": "B",
+      "mae": 0.1282,
+      "rmse": 0.1935
+    },
+    {
+      "dataset": "cross_validation",
+      "indication": "C",
+      "mae": 0.1707,
+      "rmse": 0.2455
+    }
+  ],
+  "benchmark_holdout_metrics": [
+    {
+      "dataset": "holdout",
+      "indication": "A",
+      "mae": 0.1847,
+      "rmse": 0.2439
+    },
+    {
+      "dataset": "holdout",
+      "indication": "B",
+      "mae": 0.1347,
+      "rmse": 0.2004
+    },
+    {
+      "dataset": "holdout",
+      "indication": "C",
+      "mae": 0.1836,
+      "rmse": 0.239
+    }
+  ],
+  "tuning_summary": [
+    {
+      "C": 0.3,
+      "mean_mae": 0.1269,
+      "mean_rmse": 0.1695
+    },
+    {
+      "C": 1.5,
+      "mean_mae": 0.1284,
+      "mean_rmse": 0.1726
+    },
+    {
+      "C": 0.7,
+      "mean_mae": 0.1285,
+      "mean_rmse": 0.1729
+    }
+  ],
+  "top_drivers": {
+    "A": {
+      "positive": {
+        "total_touchpoints_all": 1.3827,
+        "hcp_share_b": 0.5391,
+        "touchpoints_share_a": 0.4416,
+        "tp_per_hcp_b": 0.1187,
+        "log_total_6m_sales": 0.0531
+      },
+      "negative": {
+        "total_hcps_all": -1.3228,
+        "touchpoints_share_b": -0.4904,
+        "hcp_share_a": -0.3577,
+        "tp_per_hcp_a": -0.2934,
+        "sales_cv": -0.1551
+      }
+    },
+    "B": {
+      "positive": {
+        "touchpoints_share_b": 2.1408,
+        "hcp_share_a": 0.7463,
+        "total_touchpoints_all": 0.7092,
+        "tp_per_hcp_a": 0.1767,
+        "sales_cv": 0.109
+      },
+      "negative": {
+        "hcp_share_b": -1.8309,
+        "tp_per_hcp_b": -1.0233,
+        "touchpoints_share_a": -0.6495,
+        "total_hcps_all": -0.3383,
+        "log_total_6m_sales": -0.073
+      }
+    },
+    "C": {
+      "positive": {
+        "total_hcps_all": 1.6611,
+        "hcp_share_b": 1.2917,
+        "tp_per_hcp_b": 0.9046,
+        "touchpoints_share_a": 0.2079,
+        "tp_per_hcp_a": 0.1167
+      },
+      "negative": {
+        "total_touchpoints_all": -2.0919,
+        "touchpoints_share_b": -1.6504,
+        "hcp_share_a": -0.3886,
+        "tp_per_hcp_c": -0.0346,
+        "log_total_6m_sales": 0.0199
+      }
+    }
+  }
+}
