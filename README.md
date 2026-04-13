@@ -59,14 +59,14 @@ for hospitals where the true split is unknown.
 Given how much a hospital buys and how the sales team interacts with that hospital’s doctors, predict what share of the drug is being used for each indication.
 
 ## Repository Structure
-- [sales.xlsx](/Users/sm_aswin21/Desktop/gsk/sales.xlsx): source dataset
-- [gsk_model.py](/Users/sm_aswin21/Desktop/gsk/gsk_model.py): data preparation, feature engineering, model training, evaluation, and artifact export
-- [streamlit_app.py](/Users/sm_aswin21/Desktop/gsk/streamlit_app.py): Streamlit application for the challenge demo
-- [GSK Indication Split Model.ipynb](/Users/sm_aswin21/Desktop/gsk/GSK%20Indication%20Split%20Model.ipynb): notebook for the core modelling workflow
-- [Notebook_Detailed.ipynb](/Users/sm_aswin21/Desktop/gsk/Notebook_Detailed.ipynb): additional notebook exploration / detailed analysis
-- [requirements.txt](/Users/sm_aswin21/Desktop/gsk/requirements.txt): Python dependencies
-- [artifacts/gsk_multinomial_model.joblib](/Users/sm_aswin21/Desktop/gsk/artifacts/gsk_multinomial_model.joblib): exported trained model artifact
-- [artifacts/gsk_model_config.json](/Users/sm_aswin21/Desktop/gsk/artifacts/gsk_model_config.json): exported model configuration
+- `sales.xlsx`: source dataset
+- `gsk_model.py`: data preparation, feature engineering, model training, evaluation, and artifact export
+- `streamlit_app.py`: Streamlit application for the challenge demo
+- `GSK Indication Split Model.ipynb`: notebook for the core modelling workflow
+- `Notebook_Detailed.ipynb`: additional notebook exploration / detailed analysis
+- `requirements.txt`: Python dependencies
+- `artifacts/gsk_multinomial_model.joblib`: exported trained model artifact
+- `artifacts/gsk_model_config.json`: exported model configuration
 
 ## Modelling Approach
 This project uses interpretable statistical models instead of black-box tree ensembles.
@@ -90,7 +90,7 @@ This benchmark uses additive log-ratio regression as a simpler statistical compa
 Example with `venv`:
 
 ```bash
-cd /Users/sm_aswin21/Desktop/gsk
+cd gsk
 python3 -m venv .venv
 source .venv/bin/activate
 ```
@@ -105,20 +105,20 @@ You can use either notebook depending on how much detail you want.
 
 ### Option A: Core modelling notebook
 ```bash
-cd /Users/sm_aswin21/Desktop/gsk
+cd gsk
 jupyter notebook "GSK Indication Split Model.ipynb"
 ```
 
 ### Option B: Detailed notebook
 ```bash
-cd /Users/sm_aswin21/Desktop/gsk
+cd gsk
 jupyter notebook "Notebook_Detailed.ipynb"
 ```
 
 If you prefer JupyterLab:
 
 ```bash
-cd /Users/sm_aswin21/Desktop/gsk
+cd gsk
 jupyter lab
 ```
 
@@ -128,7 +128,7 @@ Then open the notebook from the Jupyter interface.
 To generate or refresh the exported model artifacts:
 
 ```bash
-cd /Users/sm_aswin21/Desktop/gsk
+cd gsk
 python gsk_model.py
 ```
 
@@ -143,7 +143,7 @@ This will:
 To launch the challenge demo app:
 
 ```bash
-cd /Users/sm_aswin21/Desktop/gsk
+cd gsk
 streamlit run streamlit_app.py
 ```
 
