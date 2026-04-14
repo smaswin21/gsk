@@ -613,25 +613,31 @@ def chart_rmse_bar(all_metrics: dict[str, pd.DataFrame]) -> go.Figure:
 
 
 def chart_radar(all_metrics: dict[str, pd.DataFrame]) -> go.Figure:
-    """Radar chart comparing models on per-indication MAE."""
     categories = ["Indication A", "Indication B", "Indication C"]
     fig = go.Figure()
     palette = [ORANGE, NAVY, "#2AA198", "#9B59B6", "#E74C3C"]
+
+    # Global max MAE for consistent scaling
+    global_max = max(
+        float(m_df["mae"].max())
+        for m_df in all_metrics.values()
+    )
+
     for (name, m_df), color in zip(all_metrics.items(), palette):
         values = []
         for ind in ["A", "B", "C"]:
             sub = m_df[m_df["indication"] == ind]
             values.append(float(sub["mae"].values[0]) if len(sub) else 0.0)
-        # Invert so bigger = better on radar
-        max_mae = max(values) + 1e-6
-        inv = [1 - v / max_mae for v in values]
+        # Invert so higher = better
+        inv = [1 - v / (global_max + 1e-6) for v in values]
         inv_closed = inv + [inv[0]]
         cats_closed = categories + [categories[0]]
+        r, g, b = int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)
         fig.add_trace(go.Scatterpolar(
             r=inv_closed,
             theta=cats_closed,
             fill="toself",
-            fillcolor=f"rgba({int(color[1:3],16)},{int(color[3:5],16)},{int(color[5:7],16)},0.15)",
+            fillcolor=f"rgba({r},{g},{b},0.15)",
             line=dict(color=color, width=2),
             name=name,
         ))
