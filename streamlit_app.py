@@ -795,50 +795,12 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
 
         st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
 
-        # Model selector
-        st.markdown('<div class="sidebar-section">Active Model</div>', unsafe_allow_html=True)
-        model_label = st.selectbox(
-            "Model",
-            list(MODEL_OPTIONS.keys()),
-            label_visibility="collapsed",
-        )
-        active_model_key = MODEL_OPTIONS[model_label]
-
-        # Model description pill
-        tag = MODEL_TAGS[active_model_key]
-        desc = MODEL_DESCRIPTIONS[active_model_key]
-        key_to_metric = {
-            "multinomial":   "Multinomial LR",
-            "alr":           "ALR Benchmark",
-            "dirichlet":     "Dirichlet",
-            "random_forest": "Random Forest",
-            "xgboost":       "XGBoost",
-        }
-        best_key = min(
-            key_to_metric.keys(),
-            key=lambda k: bundle["all_metrics"][key_to_metric[k]]["mae"].mean()
-        )
-        if active_model_key == best_key:
-            tag = "⭐ Best Model"
-        tag_color = "chip" if active_model_key == best_key else "chip chip-navy"
-        st.markdown(
-            f"""
-            <div style="margin-top:0.4rem;">
-                <div class="{tag_color}" style="display:inline-block;margin-bottom:0.45rem;">{tag}</div>
-                <p style="font-size:0.83rem;color:rgba(127,127,127,0.9);line-height:1.45;margin:0;">{desc}</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
-
     st.markdown(
             """<script>window.scrollTo({top: 0, behavior: 'smooth'});</script>""",
             unsafe_allow_html=True,
         )
 
-    return page, active_model_key
+    return page, "multinomial"
 
 
 # ---------------------------------------------------------------------------
