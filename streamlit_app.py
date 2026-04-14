@@ -264,11 +264,14 @@ def add_app_style() -> None:
                 background: var(--secondary-background-color);
                 border: 1.5px solid rgba(255,106,0,0.2);
                 border-radius: 16px;
-                padding: 1rem 1.1rem;
-                height: 220px;
+                padding: 1.1rem 1.2rem;
+                min-height: 240px;
+                height: 100%;
+                box-sizing: border-box;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+                overflow: visible;
             }
             .model-card .model-tag {
                 display: inline-block;
@@ -1019,7 +1022,7 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
     for col, (metric_name, key, label) in zip(row1, model_items[:3]):
         _render_model_card(col, metric_name, key, label)
 
-    _, c1, c2, _ = st.columns([0.5, 1, 1, 0.5])
+    _, c1, c2, _ = st.columns([1, 3, 3, 1])
     for col, (metric_name, key, label) in zip([c1, c2], model_items[3:]):
         _render_model_card(col, metric_name, key, label)
 
