@@ -164,10 +164,10 @@ def add_app_style() -> None:
                 line-height: 1.5;
             }
             .section-title {
-                font-size: 1.15rem;
-                font-weight: 700;
+                font-size: 1.4rem;
+                font-weight: 800;
                 margin: 1.6rem 0 0.6rem;
-                letter-spacing: -0.01em;
+                letter-spacing: -0.02em;
             }
 
             /* ---- Cards ---- */
