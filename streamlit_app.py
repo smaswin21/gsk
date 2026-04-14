@@ -767,7 +767,20 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
         # Model description pill
         tag = MODEL_TAGS[active_model_key]
         desc = MODEL_DESCRIPTIONS[active_model_key]
-        tag_color = "chip" if active_model_key == "multinomial" else "chip chip-navy"
+        key_to_metric = {
+            "multinomial":   "Multinomial LR",
+            "alr":           "ALR Benchmark",
+            "dirichlet":     "Dirichlet",
+            "random_forest": "Random Forest",
+            "xgboost":       "XGBoost",
+        }
+        best_key = min(
+            key_to_metric.keys(),
+            key=lambda k: bundle["all_metrics"][key_to_metric[k]]["mae"].mean()
+        )
+        if active_model_key == best_key:
+            tag = "⭐ Best Model"
+        tag_color = "chip" if active_model_key == best_key else "chip chip-navy"
         st.markdown(
             f"""
             <div style="margin-top:0.4rem;">
