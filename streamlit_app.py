@@ -864,7 +864,7 @@ def render_overview(bundle: dict[str, Any]) -> None:
         """
         <div class="chip-wrap">
             <div class="chip">5 Models Evaluated</div>
-            <div class="chip chip-navy">100 Hospitals</div>
+            <div class="chip chip-navy">100 Hospitals · All Labeled</div>
             <div class="chip chip-green">Shares always sum to 100 %</div>
         </div>
         """,
@@ -880,7 +880,7 @@ def render_overview(bundle: dict[str, Any]) -> None:
     k1, k2, k3, k4 = st.columns(4)
     for col, label, value, sub in [
         (k1, "Hospitals",         f"{n_hospitals}",           "In dataset"),
-        (k2, "Labeled hospitals", "~50",                      "With known split"),
+        (k2, "Labeled hospitals", f"{n_labeled}",             "With known split"),
         (k3, "Champion MAE",      f"{champion_avg_mae:.4f}",  "Avg across indications"),
         (k4, "Total units (6m)",  f"{total_units:,}",         "Across all hospitals"),
     ]:
