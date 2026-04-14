@@ -813,52 +813,15 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
         )
 
         st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
-
-        # Hospital inputs
-        st.markdown('<div class="sidebar-section">Hospital Inputs</div>', unsafe_allow_html=True)
-        with st.form("hospital_form"):
-            total_6m_sales = st.number_input(
-                "Total 6-month sales (units)",
-                min_value=1, step=25,
-                value=int(st.session_state["total_6m_sales"]),
-                help="Total units purchased by the hospital over 6 months.",
-            )
-            st.markdown("**Touchpoints by indication**")
-            c1, c2, c3 = st.columns(3)
-            touchpoints_a = c1.number_input("Ind. A", min_value=0, step=5, value=int(st.session_state["touchpoints_a"]), key="tp_a_inp")
-            touchpoints_b = c2.number_input("Ind. B", min_value=0, step=5, value=int(st.session_state["touchpoints_b"]), key="tp_b_inp")
-            touchpoints_c = c3.number_input("Ind. C", min_value=0, step=5, value=int(st.session_state["touchpoints_c"]), key="tp_c_inp")
-
-            st.markdown("**HCPs reached by indication**")
-            c4, c5, c6 = st.columns(3)
-            hcps_a = c4.number_input("Ind. A", min_value=0, step=5, value=int(st.session_state["hcps_a"]), key="hcp_a_inp")
-            hcps_b = c5.number_input("Ind. B", min_value=0, step=5, value=int(st.session_state["hcps_b"]), key="hcp_b_inp")
-            hcps_c = c6.number_input("Ind. C", min_value=0, step=5, value=int(st.session_state["hcps_c"]), key="hcp_c_inp")
-
-            submitted = st.form_submit_button("▶ Run Prediction", use_container_width=True, type="primary")
-
-        if submitted:
-            latest = {
-                "total_6m_sales": float(total_6m_sales),
-                "touchpoints_a":  float(touchpoints_a),
-                "touchpoints_b":  float(touchpoints_b),
-                "touchpoints_c":  float(touchpoints_c),
-                "hcps_a":         float(hcps_a),
-                "hcps_b":         float(hcps_b),
-                "hcps_c":         float(hcps_c),
-            }
-            st.session_state["submitted_raw_inputs"] = latest
-            st.session_state["submitted_model_key"]  = active_model_key
-            for k, v in latest.items():
-                st.session_state[k] = v
-            with st.spinner("Scoring scenario…"):
-                time.sleep(0.25)
-
-        st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
         st.markdown(
             '<p style="font-size:0.75rem;color:rgba(127,127,127,0.6);line-height:1.4;">'
             'Model trained on synthetic GSK hospital sales data. '
             'Best model determined dynamically from holdout evaluation.</p>',
+            unsafe_allow_html=True,
+        )
+
+    st.markdown(
+            """<script>window.scrollTo({top: 0, behavior: 'smooth'});</script>""",
             unsafe_allow_html=True,
         )
 
@@ -1116,6 +1079,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
 
         submitted = st.form_submit_button("▶ Run Prediction", use_container_width=True, type="primary")
 
+    results_anchor = st.empty()
     if submitted:
         latest = {
             "total_6m_sales": float(total_6m_sales),
@@ -1130,6 +1094,11 @@ def render_calculator(bundle: dict[str, Any]) -> None:
         st.session_state["submitted_model_key"]  = MODEL_OPTIONS[model_label_calc]
         for k, v in latest.items():
             st.session_state[k] = v
+        results_anchor.markdown(
+            '<div id="results"></div>'
+            '<script>document.getElementById("results").scrollIntoView({behavior:"smooth"});</script>',
+            unsafe_allow_html=True,
+        )
 
     st.markdown("---")
 
