@@ -831,11 +831,6 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
             unsafe_allow_html=True,
         )
 
-        st.markdown(
-            '<p style="font-size:0.75rem;color:rgba(127,127,127,0.6);line-height:1.4;margin-bottom:0.8rem;">'
-            '⚠️ All data in this app is fully synthetic and does not represent real patients, hospitals, or commercial activity.</p>',
-            unsafe_allow_html=True,
-        )
         st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
 
     st.markdown(
