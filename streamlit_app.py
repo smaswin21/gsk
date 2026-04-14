@@ -960,7 +960,7 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
     all_metrics = bundle["all_metrics"]
     raw         = st.session_state["submitted_raw_inputs"]
 
-    st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;">Model Comparison</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;margin-top:-2rem;">Model Comparison</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p style="font-size:1.05rem;color:rgba(127,127,127,0.9);margin-bottom:1.4rem;">Head-to-head performance of all five models on the hold-out test set '
         'and side-by-side prediction output for the current hospital scenario.</p>',
