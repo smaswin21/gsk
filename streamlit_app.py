@@ -864,7 +864,7 @@ def render_overview(bundle: dict[str, Any]) -> None:
         """
         <div class="chip-wrap">
             <div class="chip">5 Models Evaluated</div>
-            <div class="chip chip-navy">~200 Hospitals</div>
+            <div class="chip chip-navy">100 Hospitals</div>
             <div class="chip chip-green">Shares always sum to 100 %</div>
         </div>
         """,
@@ -880,7 +880,7 @@ def render_overview(bundle: dict[str, Any]) -> None:
     k1, k2, k3, k4 = st.columns(4)
     for col, label, value, sub in [
         (k1, "Hospitals",         f"{n_hospitals}",           "In dataset"),
-        (k2, "Labeled hospitals", f"{n_labeled}",             "Training sample"),
+        (k2, "Labeled hospitals", "~50",                      "With known split"),
         (k3, "Champion MAE",      f"{champion_avg_mae:.4f}",  "Avg across indications"),
         (k4, "Total units (6m)",  f"{total_units:,}",         "Across all hospitals"),
     ]:
@@ -900,17 +900,17 @@ def render_overview(bundle: dict[str, Any]) -> None:
     with cols[0]:
         st.markdown(
             """<div class="card"><h3>Challenge</h3>
-            <p>Hospitals purchase one drug that may be prescribed for multiple indications. 
-            Purchase orders do not specify how much was used for Indication A, B, or C, 
-            making it impossible to assess commercial effectiveness by disease area.</p></div>""",
+            <p>Hospitals purchase <strong>one drug prescribed for multiple indications</strong>. 
+            Purchase orders do not specify how much was used for <strong>Indication A, B, or C</strong>, 
+            making it impossible to assess <strong>commercial effectiveness by disease area</strong>.</p></div>""",
             unsafe_allow_html=True,
         )
     with cols[1]:
         st.markdown(
             """<div class="card"><h3>Solution</h3>
-            <p>We model the indication split using touchpoints and HCP reach broken down 
-            by indication as predictors. Five models are compared; the champion 
-            Weighted Multinomial Logistic Regression is recommended for deployment.</p></div>""",
+            <p>We model the indication split using <strong>touchpoints and HCP reach</strong> broken down 
+            by indication as predictors. <strong>Five models</strong> are compared on a held-out test set. 
+            <strong>Indication A dominates</strong> (~66% average share), making B and C harder to predict.</p></div>""",
             unsafe_allow_html=True,
         )
 
