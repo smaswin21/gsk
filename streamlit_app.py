@@ -1073,7 +1073,17 @@ def render_calculator(bundle: dict[str, Any]) -> None:
             st.markdown("**Model**")
             model_label_calc = st.selectbox("Model", list(MODEL_OPTIONS.keys()), label_visibility="collapsed")
 
-            submitted = st.form_submit_button("▶ Run Prediction", use_container_width=True, type="primary")
+            col_run, col_reset = st.columns([3, 1])
+            submitted = col_run.form_submit_button("▶ Run Prediction", use_container_width=True, type="primary")
+            reset = col_reset.form_submit_button("↺ Reset", use_container_width=True, type="secondary")
+
+        if reset:
+            defaults = bundle["default_raw_inputs"]
+            for k, v in defaults.items():
+                st.session_state[k] = v
+            st.session_state["submitted_raw_inputs"] = defaults
+            st.session_state["submitted_model_key"]  = "multinomial"
+            st.rerun()
 
         if submitted:
             latest = {
