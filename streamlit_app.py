@@ -989,30 +989,35 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
         ("Random Forest",   "random_forest","Random Forest"),
         ("XGBoost",         "xgboost",      "XGBoost"),
     ]
-    for i in range(0, len(model_items), 2):
-        pair = model_items[i:i+2]
-        cols = st.columns(2)
-        for col, (metric_name, key, label) in zip(cols, pair):
-            mae  = all_metrics[metric_name]["mae"].mean()
-            rmse = all_metrics[metric_name]["rmse"].mean()
-            tag  = MODEL_TAGS[key]
-            desc = MODEL_DESCRIPTIONS[key]
-            is_best = metric_name == best_name
-            border_style = "border: 2px solid #FF6A00;" if is_best else ""
-            col.markdown(
-                f"""<div class="model-card" style="{border_style}">
-                    <div class="model-tag">{tag}{' 🏆' if is_best else ''}</div>
-                    <div class="model-name">{label}</div>
-                    <p class="model-desc">{desc}</p>
-                    <div style="display:flex;gap:1.5rem;margin-top:0.7rem;">
-                        <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Avg MAE</span>
-                             <br><strong style="color:#FF6A00;">{mae:.4f}</strong></div>
-                        <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Avg RMSE</span>
-                             <br><strong style="color:#1E257F;">{rmse:.4f}</strong></div>
-                    </div>
-                </div>""",
-                unsafe_allow_html=True,
-            )
+    def _render_model_card(col, metric_name, key, label):
+        mae  = all_metrics[metric_name]["mae"].mean()
+        rmse = all_metrics[metric_name]["rmse"].mean()
+        tag  = MODEL_TAGS[key]
+        desc = MODEL_DESCRIPTIONS[key]
+        is_best = metric_name == best_name
+        border_style = "border: 2px solid #FF6A00;" if is_best else ""
+        col.markdown(
+            f"""<div class="model-card" style="{border_style}">
+                <div class="model-tag">{tag}{' 🏆' if is_best else ''}</div>
+                <div class="model-name">{label}</div>
+                <p class="model-desc">{desc}</p>
+                <div style="display:flex;gap:1.5rem;margin-top:0.7rem;">
+                    <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Avg MAE</span>
+                         <br><strong style="color:#FF6A00;">{mae:.4f}</strong></div>
+                    <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Avg RMSE</span>
+                         <br><strong style="color:#1E257F;">{rmse:.4f}</strong></div>
+                </div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+
+    row1 = st.columns(3)
+    for col, (metric_name, key, label) in zip(row1, model_items[:3]):
+        _render_model_card(col, metric_name, key, label)
+
+    _, c1, c2, _ = st.columns([0.5, 1, 1, 0.5])
+    for col, (metric_name, key, label) in zip([c1, c2], model_items[3:]):
+        _render_model_card(col, metric_name, key, label)
 
     # All-model prediction comparison for current scenario
     st.markdown('<p class="section-title">Predicted splits for current hospital scenario</p>', unsafe_allow_html=True)
