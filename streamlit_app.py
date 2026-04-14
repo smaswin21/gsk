@@ -1203,18 +1203,28 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
         st.markdown("<div style='height:2rem;'></div>", unsafe_allow_html=True)
         st.markdown("<div style='font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(127,127,127,0.7);margin-bottom:0.5rem;'>Indication</div>", unsafe_allow_html=True)
         current = st.session_state.get("de_dist_inds", ["A", "B", "C"])
+        navy, orange, teal = "#1E257F", "#FF6A00", "#2AA198"
+        a_on, b_on, c_on = "A" in current, "B" in current, "C" in current
+        st.markdown(f"""<style>
+            button[kind="secondary"][data-testid="baseButton-secondary"] {{ border-radius: 8px !important; }}
+            div[data-testid="stVerticalBlock"] div:nth-of-type(1) > div[data-testid="stButton"] button {{
+                background: {''+navy if a_on else 'transparent'} !important;
+                color: {'white' if a_on else navy} !important;
+                border: 2px solid {navy} !important;
+            }}
+            div[data-testid="stVerticalBlock"] div:nth-of-type(2) > div[data-testid="stButton"] button {{
+                background: {''+orange if b_on else 'transparent'} !important;
+                color: {'white' if b_on else orange} !important;
+                border: 2px solid {orange} !important;
+            }}
+            div[data-testid="stVerticalBlock"] div:nth-of-type(3) > div[data-testid="stButton"] button {{
+                background: {''+teal if c_on else 'transparent'} !important;
+                color: {'white' if c_on else teal} !important;
+                border: 2px solid {teal} !important;
+            }}
+        </style>""", unsafe_allow_html=True)
         for ind_opt in ["A", "B", "C"]:
-            hex_color = INDICATION_COLORS[ind_opt]
             is_on = ind_opt in current
-            st.markdown(f"""
-                <style>
-                div[data-testid="stButton"]:has(button[data-testid="baseButton-secondary"][key="de_dist_btn_{ind_opt}"]) button,
-                div[data-testid="stButton"]:has(button[key="de_dist_btn_{ind_opt}"]) button {{
-                    background: {''+hex_color if is_on else 'transparent'} !important;
-                    color: {'white' if is_on else hex_color} !important;
-                    border: 2px solid {hex_color} !important;
-                }}
-                </style>""", unsafe_allow_html=True)
             if st.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, type="secondary"):
                 new = current.copy()
                 if is_on and len(current) > 1:
