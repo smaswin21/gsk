@@ -631,7 +631,7 @@ def chart_radar(all_metrics: dict[str, pd.DataFrame]) -> go.Figure:
             r=inv_closed,
             theta=cats_closed,
             fill="toself",
-            fillcolor=color + "25",
+            fillcolor=f"rgba({int(color[1:3],16)},{int(color[3:5],16)},{int(color[5:7],16)},0.15)",,
             line=dict(color=color, width=2),
             name=name,
         ))
