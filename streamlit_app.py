@@ -1231,22 +1231,7 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
         )
         fig_hcp_sales.update_traces(marker=dict(size=8, opacity=0.75))
         fig_hcp_sales.update_layout(title=f"Do more HCP visits correlate with higher total sales? — Indication {ind_choice2}")
-        st.plotly_chart(_theme(fig_hcp_sales, 360), use_container_width=True, theme="streamlit", key=f"hcp_sales_{ind_choice2}")
-    fig_hcp_sales = px.scatter(
-        labeled_de,
-        x=f"total_hcps_{ind_l2}",
-        y="total_6m_sales",
-        color=f"avg_split_{ind_l2}",
-        color_continuous_scale=["#e0e0e0", INDICATION_COLORS[ind_choice2]],
-        labels={
-            f"total_hcps_{ind_l2}": f"Total HCPs Visited — Ind. {ind_choice2}",
-            "total_6m_sales": "Total 6-month Sales (units)",
-            f"avg_split_{ind_l2}": f"Actual Split {ind_choice2}",
-        },
-    )
-    fig_hcp_sales.update_traces(marker=dict(size=8, opacity=0.75))
-    fig_hcp_sales.update_layout(title=f"Do more HCP visits correlate with higher total sales? — Indication {ind_choice2}")
-    st.plotly_chart(_theme(fig_hcp_sales, 360), use_container_width=True, theme="streamlit")
+        st.plotly_chart(_theme(fig_hcp_sales, 360), use_container_width=True, theme="streamlit")
 
     # Average split distribution among labeled hospitals
     labeled = modeling_df.dropna(subset=["avg_split_a"]).copy()
