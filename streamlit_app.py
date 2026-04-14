@@ -1092,7 +1092,8 @@ def render_calculator(bundle: dict[str, Any]) -> None:
 
         st.markdown('<p class="section-title">📊 Results</p>', unsafe_allow_html=True)
         st.markdown(
-            f'<div class="note-banner" style="margin-bottom:1rem;"><strong>{tag} · {model_label}</strong></div>',
+            f'<div class="note-banner" style="margin-bottom:1rem;"><strong>{tag} · {model_label}</strong><br>'
+            f'<span style="font-size:0.85rem;color:rgba(127,127,127,0.85);">Based on {int(total_sales):,} total units over 6 months</span></div>',
             unsafe_allow_html=True,
         )
 
@@ -1113,6 +1114,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
             )
 
         st.plotly_chart(chart_mix(prediction), use_container_width=True, theme="streamlit")
+        st.plotly_chart(chart_units(prediction, total_sales), use_container_width=True, theme="streamlit")
 
     # ── All-model comparison below ──
     st.markdown('<p class="section-title">⚡ All Models Comparison</p>', unsafe_allow_html=True)
