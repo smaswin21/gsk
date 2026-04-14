@@ -1225,7 +1225,9 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
         labeled_dist = modeling_df.dropna(subset=["avg_split_a"]).copy()
         labeled_dist = labeled_dist.sort_values("total_6m_sales").reset_index(drop=True)
         fig_dist = go.Figure()
-        for ind in selected_inds:
+        for ind in ["A", "B", "C"]:
+            if ind not in selected_inds:
+                continue
             ind_l = ind.lower()
             estimated = labeled_dist["total_6m_sales"] * labeled_dist[f"avg_split_{ind_l}"]
             fig_dist.add_trace(go.Bar(
@@ -1242,6 +1244,7 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
             yaxis_title="Hospital (sorted by total sales)",
             barmode="stack",
             showlegend=True,
+            bargap=0,
             yaxis=dict(showticklabels=False),
         )
         st.plotly_chart(_theme(fig_dist, 650), use_container_width=True, theme="streamlit", key="de_sales_dist")
