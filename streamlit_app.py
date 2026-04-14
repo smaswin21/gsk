@@ -772,7 +772,7 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
         )
 
         st.markdown(
-            '<p style="font-size:0.75rem;color:rgba(127,127,127,0.6);line-height:1.4;margin-bottom:0.8rem;">'
+            '<p style="font-size:0.92rem;font-weight:600;color:#111111;line-height:1.4;margin-bottom:0.8rem;">'
             '⚠️ All data in this app is fully synthetic and does not represent real patients, hospitals, or commercial activity.</p>',
             unsafe_allow_html=True,
         )
@@ -1007,7 +1007,7 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
         tag  = MODEL_TAGS[key]
         desc = MODEL_DESCRIPTIONS[key]
         is_best = metric_name == best_name
-        border_style = "border: 2px solid #FF6A00;" if is_best else ""
+        border_style = "border: 3.5px solid #1E257F; box-shadow: 0 0 0 2px rgba(30,37,127,0.18);" if is_best else ""
         col.markdown(
             f"""<div class="model-card" style="{border_style}">
                 <div class="model-tag">{tag}{' 🏆' if is_best else ''}</div>
