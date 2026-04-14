@@ -1201,6 +1201,58 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
     with col_dist_sel:
         st.markdown("<div style='height:2rem;'></div>", unsafe_allow_html=True)
         st.markdown("<div style='font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(127,127,127,0.7);margin-bottom:0.5rem;'>Indication</div>", unsafe_allow_html=True)
+        current = st.session_state.get("de_dist_inds", ["A", "B", "C"])
+        for ind_opt in ["A", "B", "C"]:
+            hex_color = INDICATION_COLORS[ind_opt]
+            is_on = ind_opt in current
+            st.markdown(
+                f"""<button onclick="void(0)" style="
+                    width:100%;margin-bottom:0.4rem;padding:0.5rem;
+                    background:{''+hex_color if is_on else 'transparent'};
+                    color:{'white' if is_on else hex_color};
+                    border:2px solid {hex_color};
+                    border-radius:8px;font-weight:700;font-size:0.95rem;
+                    cursor:pointer;">
+                    {ind_opt}
+                </button>""",
+                unsafe_allow_html=True,
+            )
+            if st.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, label_visibility="collapsed"):
+                new = current.copy()
+                if is_on and len(current) > 1:
+                    new.remove(ind_opt)
+                elif not is_on:
+                    new.append(ind_opt)
+                st.session_state["de_dist_inds"] = new
+                st.rerun()
+    selected_inds = st.session_state.get("de_dist_inds", ["A", "B", "C"])
+    with col_dist:
+        fig_dist = go.Figure()
+        for ind in selected_inds:
+            ind_l = ind.lower()
+            split_col = f"avg_split_{ind_l}"
+            labeled_dist = modeling_df.dropna(subset=[split_col]).copy()
+            estimated_sales = labeled_dist["total_6m_sales"] * labeled_dist[split_col]
+            fig_dist.add_trace(go.Histogram(
+                x=estimated_sales,
+                name=f"Indication {ind}",
+                marker_color=INDICATION_COLORS[ind],
+                opacity=0.9,
+                nbinsx=25,
+                hovertemplate=f"<b>Indication {ind}</b><br>Est. Sales: %{{x:,.0f}}<br>Hospitals: %{{y}}<extra></extra>",
+            ))
+        fig_dist.update_layout(
+            title="Estimated sales distribution per indication (actual split × total sales)",
+            barmode="stack",
+            xaxis_title="Estimated Units",
+            yaxis_title="# Hospitals",
+            showlegend=False,
+        )
+        st.plotly_chart(_theme(fig_dist, 320), use_container_width=True, theme="streamlit", key="de_sales_dist")
+    col_dist, col_dist_sel = st.columns([5, 1])
+    with col_dist_sel:
+        st.markdown("<div style='height:2rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(127,127,127,0.7);margin-bottom:0.5rem;'>Indication</div>", unsafe_allow_html=True)
         for ind_opt in ["A", "B", "C"]:
             current = st.session_state.get("de_dist_inds", ["A", "B", "C"])
             is_on = ind_opt in current
