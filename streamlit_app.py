@@ -1196,62 +1196,6 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
             unsafe_allow_html=True,
         )
 
-    # ── Sales distribution by indication ──
-    st.markdown('<p class="section-title">Sales distribution by indication</p>', unsafe_allow_html=True)
-    col_dist, col_dist_sel = st.columns([5, 1])
-    with col_dist_sel:
-        st.markdown("<div style='height:2rem;'></div>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(127,127,127,0.7);margin-bottom:0.5rem;'>Indication</div>", unsafe_allow_html=True)
-        current = st.session_state.get("de_dist_inds", ["A", "B", "C"])
-        for ind_opt in ["A", "B", "C"]:
-            hex_color = INDICATION_COLORS[ind_opt]
-            is_on = ind_opt in current
-            col_dot, col_btn = st.columns([1, 3])
-            col_dot.markdown(
-                f'<div style="height:100%;display:flex;align-items:center;justify-content:center;padding-top:0.4rem;">'
-                f'<span style="font-size:1.2rem;color:{hex_color};">{"●" if is_on else "○"}</span></div>',
-                unsafe_allow_html=True,
-            )
-            if col_btn.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, type="secondary"):
-                new = current.copy()
-                if is_on and len(current) > 1:
-                    new.remove(ind_opt)
-                elif not is_on:
-                    new.append(ind_opt)
-                st.session_state["de_dist_inds"] = new
-                st.rerun()
-    selected_inds = st.session_state.get("de_dist_inds", ["A", "B", "C"])
-    with col_dist:
-        labeled_dist = modeling_df.dropna(subset=["avg_split_a"]).copy()
-        labeled_dist = labeled_dist.sort_values("total_6m_sales").reset_index(drop=True)
-        rows = []
-        for i, (_, row) in enumerate(labeled_dist.iterrows()):
-            for ind in selected_inds:
-                rows.append({
-                    "Hospital": f"Hospital {i+1}",
-                    "Indication": f"Indication {ind}",
-                    "Sales": row["total_6m_sales"] * row[f"avg_split_{ind.lower()}"],
-                })
-        treemap_df = pd.DataFrame(rows)
-        fig_dist = px.treemap(
-            treemap_df,
-            path=["Indication", "Hospital"],
-            values="Sales",
-            color="Indication",
-            color_discrete_map={
-                "Indication A": INDICATION_COLORS["A"],
-                "Indication B": INDICATION_COLORS["B"],
-                "Indication C": INDICATION_COLORS["C"],
-            },
-            title="Estimated indication sales by hospital",
-        )
-        fig_dist.update_traces(
-            textinfo="label+value",
-            hovertemplate="<b>%{label}</b><br>Est. Sales: %{value:,.0f} units<extra></extra>",
-        )
-        fig_dist.update_layout(margin=dict(t=50, l=10, r=10, b=10))
-        st.plotly_chart(_theme(fig_dist, 550), use_container_width=True, theme="streamlit", key="de_sales_dist")
-
     # ── HCP vs total sales ──
     st.markdown('<p class="section-title">Total HCPs vs total sales by indication</p>', unsafe_allow_html=True)
     col_chart2, col_sel2 = st.columns([5, 1])
