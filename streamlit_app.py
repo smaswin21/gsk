@@ -1209,10 +1209,10 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
             col_dot, col_btn = st.columns([1, 3])
             col_dot.markdown(
                 f'<div style="height:100%;display:flex;align-items:center;justify-content:center;padding-top:0.4rem;">'
-                f'<span style="font-size:1.2rem;color:{hex_color};">●</span></div>',
+                f'<span style="font-size:1.2rem;color:{hex_color};">{"●" if is_on else "○"}</span></div>',
                 unsafe_allow_html=True,
             )
-            if col_btn.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, type="primary" if is_on else "secondary"):
+            if col_btn.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, type="secondary"):
                 new = current.copy()
                 if is_on and len(current) > 1:
                     new.remove(ind_opt)
@@ -1242,7 +1242,7 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
             title="Estimated indication sales by hospital (sorted by total sales)",
             xaxis_title="Total 6-month Sales (units)",
             yaxis_title="Estimated Sales by Indication",
-            showlegend=False,
+            showlegend=True,
         )
         st.plotly_chart(_theme(fig_dist, 320), use_container_width=True, theme="streamlit", key="de_sales_dist")
 
