@@ -1159,7 +1159,9 @@ def render_calculator(bundle: dict[str, Any]) -> None:
         pred      = predict_scenario(bundle, raw, key)
         is_active = key == model_key
         border    = "border:2px solid #FF6A00;" if is_active else ""
-        active_label = "<div style='font-size:0.75rem;color:#FF6A00;font-weight:700;margin-top:0.3rem;'>▶ Active</div>" if is_active else ""
+        active_html = ""
+        if is_active:
+            active_html = "<div style='font-size:0.75rem;color:#FF6A00;font-weight:700;margin-top:0.3rem;'>&#9654; Active</div>"
         col.markdown(
             f"""<div class="kpi-tile" style="{border}">
                 <div class="kpi-label">{short}</div>
@@ -1168,7 +1170,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
                     <span style="color:{INDICATION_COLORS['B']};font-weight:700;">B {pred['pred_split_b']*100:.0f}%</span><br>
                     <span style="color:{INDICATION_COLORS['C']};font-weight:700;">C {pred['pred_split_c']*100:.0f}%</span>
                 </div>
-                {active_label}
+                {active_html}
             </div>""",
             unsafe_allow_html=True,
         )
