@@ -706,8 +706,6 @@ def chart_touchpoints_vs_split(modeling_df: pd.DataFrame, indication: str = "a")
         df, x=col_tp, y=col_sp,
         color_discrete_sequence=[INDICATION_COLORS[ind_up]],
         labels={col_tp: f"Touchpoints Share — Ind. {ind_up}", col_sp: f"Actual Sales Share — Ind. {ind_up}"},
-        trendline="ols",
-        trendline_color_override=NAVY,
     )
     fig.update_traces(marker=dict(size=7, opacity=0.65))
     fig.update_layout(title=f"Touchpoints share vs actual sales split — Indication {ind_up}")
