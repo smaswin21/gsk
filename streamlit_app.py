@@ -827,6 +827,16 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
 
         st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
         st.markdown(
+            """<div style="background:rgba(255,106,0,0.08);border:1px solid rgba(255,106,0,0.25);
+            border-radius:10px;padding:0.55rem 0.75rem;margin-bottom:0.6rem;font-size:0.78rem;
+            line-height:1.5;color:rgba(127,127,127,0.9);">
+            ⚠️ <strong style="color:#FF6A00;">Synthetic Data</strong><br>
+            All hospital data in this app is fully synthetic, generated for demonstration purposes only.
+            It does not represent real patients, hospitals, or commercial activity.
+            </div>""",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
             '<p style="font-size:0.75rem;color:rgba(127,127,127,0.6);line-height:1.4;">'
             'Model trained on synthetic GSK hospital sales data. '
             'Best model determined dynamically from holdout evaluation.</p>',
