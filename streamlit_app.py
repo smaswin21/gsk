@@ -1196,6 +1196,7 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
             unsafe_allow_html=True,
         )
 
+    # ── Sales distribution by indication ──
     st.markdown('<p class="section-title">Sales distribution by indication</p>', unsafe_allow_html=True)
     col_dist, col_dist_sel = st.columns([5, 1])
     with col_dist_sel:
@@ -1205,19 +1206,7 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
         for ind_opt in ["A", "B", "C"]:
             hex_color = INDICATION_COLORS[ind_opt]
             is_on = ind_opt in current
-            st.markdown(
-                f"""<button onclick="void(0)" style="
-                    width:100%;margin-bottom:0.4rem;padding:0.5rem;
-                    background:{''+hex_color if is_on else 'transparent'};
-                    color:{'white' if is_on else hex_color};
-                    border:2px solid {hex_color};
-                    border-radius:8px;font-weight:700;font-size:0.95rem;
-                    cursor:pointer;">
-                    {ind_opt}
-                </button>""",
-                unsafe_allow_html=True,
-            )
-            if st.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, label_visibility="collapsed"):
+            if st.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, type="primary" if is_on else "secondary"):
                 new = current.copy()
                 if is_on and len(current) > 1:
                     new.remove(ind_opt)
@@ -1249,51 +1238,8 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
             showlegend=False,
         )
         st.plotly_chart(_theme(fig_dist, 320), use_container_width=True, theme="streamlit", key="de_sales_dist")
-    col_dist, col_dist_sel = st.columns([5, 1])
-    with col_dist_sel:
-        st.markdown("<div style='height:2rem;'></div>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(127,127,127,0.7);margin-bottom:0.5rem;'>Indication</div>", unsafe_allow_html=True)
-        for ind_opt in ["A", "B", "C"]:
-            current = st.session_state.get("de_dist_inds", ["A", "B", "C"])
-            is_on = ind_opt in current
-            if st.button(
-                f"{'✓ ' if is_on else ''}{ind_opt}",
-                key=f"de_dist_btn_{ind_opt}",
-                use_container_width=True,
-                type="primary" if is_on else "secondary",
-            ):
-                new = current.copy()
-                if is_on and len(current) > 1:
-                    new.remove(ind_opt)
-                elif not is_on:
-                    new.append(ind_opt)
-                st.session_state["de_dist_inds"] = new
-                st.rerun()
-    selected_inds = st.session_state.get("de_dist_inds", ["A", "B", "C"])
-    with col_dist:
-        fig_dist = go.Figure()
-        for ind in selected_inds:
-            ind_l = ind.lower()
-            sales_col = f"total_touchpoints_{ind_l}"
-            split_col = f"avg_split_{ind_l}"
-            labeled_dist = modeling_df.dropna(subset=[split_col]).copy()
-            estimated_sales = labeled_dist["total_6m_sales"] * labeled_dist[split_col]
-            fig_dist.add_trace(go.Histogram(
-                x=estimated_sales,
-                name=f"Indication {ind}",
-                marker_color=INDICATION_COLORS[ind],
-                opacity=0.75,
-                nbinsx=25,
-                hovertemplate=f"<b>Indication {ind}</b><br>Est. Sales: %{{x:,.0f}}<br>Hospitals: %{{y}}<extra></extra>",
-            ))
-        fig_dist.update_layout(
-            title="Estimated sales distribution per indication (actual split × total sales)",
-            barmode="overlay",
-            xaxis_title="Estimated Units",
-            yaxis_title="# Hospitals",
-        )
-        st.plotly_chart(_theme(fig_dist, 320), use_container_width=True, theme="streamlit", key="de_sales_dist")
 
+    # ── HCP vs total sales ──
     st.markdown('<p class="section-title">Total HCPs vs total sales by indication</p>', unsafe_allow_html=True)
     col_chart2, col_sel2 = st.columns([5, 1])
     with col_sel2:
@@ -1326,9 +1272,9 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
         )
         fig_hcp_sales.update_traces(marker=dict(size=8, opacity=0.75))
         fig_hcp_sales.update_layout(title=f"Do more HCP visits correlate with higher total sales? — Indication {ind_choice2}")
-        st.plotly_chart(_theme(fig_hcp_sales, 360), use_container_width=True, theme="streamlit")
+        st.plotly_chart(_theme(fig_hcp_sales, 360), use_container_width=True, theme="streamlit", key=f"hcp_sales_{ind_choice2}")
 
-    # Average split distribution among labeled hospitals
+    # ── Actual split distribution ──
     labeled = modeling_df.dropna(subset=["avg_split_a"]).copy()
     if not labeled.empty:
         st.markdown('<p class="section-title">Actual indication split — labeled hospitals</p>', unsafe_allow_html=True)
@@ -1343,7 +1289,7 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
         fig.update_layout(title="Distribution of actual indication splits (labeled hospitals)", yaxis_title="Share")
         st.plotly_chart(_theme(fig, 360), use_container_width=True, theme="streamlit")
 
-    # Raw data table
+    # ── Raw data table ──
     st.markdown('<p class="section-title">Raw data sample</p>', unsafe_allow_html=True)
     display_cols = [
         "total_6m_sales",
