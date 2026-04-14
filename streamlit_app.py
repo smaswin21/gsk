@@ -1200,9 +1200,38 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
     st.plotly_chart(chart_sales_distribution(modeling_df), use_container_width=True, theme="streamlit")
 
     st.markdown('<p class="section-title">Total HCPs vs total sales by indication</p>', unsafe_allow_html=True)
-    ind_choice2 = st.selectbox("Indication", ["A", "B", "C"], index=0, key="de_hcp_ind")
+    col_chart2, col_sel2 = st.columns([5, 1])
+    with col_sel2:
+        st.markdown("<div style='height:2rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(127,127,127,0.7);margin-bottom:0.5rem;'>Indication</div>", unsafe_allow_html=True)
+        for ind_opt in ["A", "B", "C"]:
+            if st.button(
+                ind_opt,
+                key=f"de_hcp_btn_{ind_opt}",
+                use_container_width=True,
+                type="primary" if st.session_state.get("de_hcp_ind", "A") == ind_opt else "secondary",
+            ):
+                st.session_state["de_hcp_ind"] = ind_opt
+                st.rerun()
+    ind_choice2 = st.session_state.get("de_hcp_ind", "A")
     ind_l2 = ind_choice2.lower()
-    labeled_de = modeling_df.dropna(subset=[f"avg_split_{ind_l2}"]).copy()
+    with col_chart2:
+        labeled_de = modeling_df.dropna(subset=[f"avg_split_{ind_l2}"]).copy()
+        fig_hcp_sales = px.scatter(
+            labeled_de,
+            x=f"total_hcps_{ind_l2}",
+            y="total_6m_sales",
+            color=f"avg_split_{ind_l2}",
+            color_continuous_scale=["#e0e0e0", INDICATION_COLORS[ind_choice2]],
+            labels={
+                f"total_hcps_{ind_l2}": f"Total HCPs Visited — Ind. {ind_choice2}",
+                "total_6m_sales": "Total 6-month Sales (units)",
+                f"avg_split_{ind_l2}": f"Actual Split {ind_choice2}",
+            },
+        )
+        fig_hcp_sales.update_traces(marker=dict(size=8, opacity=0.75))
+        fig_hcp_sales.update_layout(title=f"Do more HCP visits correlate with higher total sales? — Indication {ind_choice2}")
+        st.plotly_chart(_theme(fig_hcp_sales, 360), use_container_width=True, theme="streamlit")
     fig_hcp_sales = px.scatter(
         labeled_de,
         x=f"total_hcps_{ind_l2}",
