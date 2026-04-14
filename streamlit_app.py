@@ -1114,7 +1114,6 @@ def render_calculator(bundle: dict[str, Any]) -> None:
             )
 
         st.plotly_chart(chart_mix(prediction), use_container_width=True, theme="streamlit")
-        st.plotly_chart(chart_units(prediction, total_sales), use_container_width=True, theme="streamlit")
 
     # ── All-model comparison below ──
     st.markdown('<p class="section-title">⚡ All Models Comparison</p>', unsafe_allow_html=True)
