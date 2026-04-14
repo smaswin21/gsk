@@ -1206,18 +1206,13 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
         for ind_opt in ["A", "B", "C"]:
             hex_color = INDICATION_COLORS[ind_opt]
             is_on = ind_opt in current
-            dot = "●" if is_on else "○"
-            label = f"{dot} {ind_opt}"
-            st.markdown(
-                f'<div style="margin-bottom:0.3rem;padding:0.45rem 0.6rem;'
-                f'border-radius:8px;border:2px solid {hex_color};'
-                f'background:{hex_color if is_on else "transparent"};'
-                f'color:{"white" if is_on else hex_color};'
-                f'font-weight:700;font-size:0.95rem;text-align:center;'
-                f'cursor:pointer;">{label}</div>',
+            col_dot, col_btn = st.columns([1, 3])
+            col_dot.markdown(
+                f'<div style="height:100%;display:flex;align-items:center;justify-content:center;padding-top:0.4rem;">'
+                f'<span style="font-size:1.2rem;color:{hex_color};">●</span></div>',
                 unsafe_allow_html=True,
             )
-            if st.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, type="secondary"):
+            if col_btn.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, type="primary" if is_on else "secondary"):
                 new = current.copy()
                 if is_on and len(current) > 1:
                     new.remove(ind_opt)
