@@ -956,12 +956,10 @@ def render_overview(bundle: dict[str, Any]) -> None:
 
 def render_model_comparison(bundle: dict[str, Any]) -> None:
     all_metrics = bundle["all_metrics"]
-    raw         = st.session_state["submitted_raw_inputs"]
 
     st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;margin-top:-2rem;">Model Comparison</h1>', unsafe_allow_html=True)
     st.markdown(
-        '<p style="font-size:1.05rem;color:rgba(127,127,127,0.9);margin-bottom:1.4rem;">Head-to-head performance of all five models on the hold-out test set '
-        'and side-by-side prediction output for the current hospital scenario.</p>',
+        '<p style="font-size:1.05rem;color:rgba(127,127,127,0.9);margin-bottom:1.4rem;">Head-to-head performance of all five models on the hold-out test set.</p>',
         unsafe_allow_html=True,
     )
 
@@ -1023,37 +1021,6 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
     _, c1, c2, _ = st.columns([1, 3, 3, 1])
     for col, (metric_name, key, label) in zip([c1, c2], model_items[3:]):
         _render_model_card(col, metric_name, key, label)
-
-    # All-model prediction comparison for current scenario
-    st.markdown('<p class="section-title">Predicted splits for current hospital scenario</p>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="note-banner navy">Adjust the hospital inputs in the sidebar and click <strong>Run Prediction</strong> to update.</div>',
-        unsafe_allow_html=True,
-    )
-    st.plotly_chart(chart_all_models_comparison(bundle, raw), use_container_width=True, theme="streamlit")
-
-    # Numeric table
-    rows = []
-    for metric_name, key, label in model_items:
-        pred = predict_scenario(bundle, raw, key)
-        rows.append({
-            "Model": label,
-            "Ind. A (%)": f"{pred['pred_split_a']*100:.1f}",
-            "Ind. B (%)": f"{pred['pred_split_b']*100:.1f}",
-            "Ind. C (%)": f"{pred['pred_split_c']*100:.1f}",
-            "Avg MAE": f"{all_metrics[metric_name]['mae'].mean():.4f}",
-        })
-    header_cols = list(rows[0].keys())
-    header_html = "".join(f"<th>{h}</th>" for h in header_cols)
-    body_html = ""
-    for r in rows:
-        cells = "".join(f"<td class='{'best' if r['Model']==best_name.replace('LR','Logistic Regression') else ''}'>{v}</td>" for v in r.values())
-        body_html += f"<tr>{cells}</tr>"
-    st.markdown(
-        f"""<table class="styled-table"><thead><tr>{header_html}</tr></thead>
-            <tbody>{body_html}</tbody></table>""",
-        unsafe_allow_html=True,
-    )
 
 
 def render_calculator(bundle: dict[str, Any]) -> None:
