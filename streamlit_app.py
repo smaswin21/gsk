@@ -10,11 +10,17 @@ import streamlit as st
 from gsk_model import (
     build_modeling_frame,
     fit_alr_models,
+    fit_dirichlet_model,
+    fit_random_forest_models,
+    fit_xgboost_models,
     get_feature_frame,
     get_target_frame,
     load_exported_artifacts,
     predict_alr,
+    predict_dirichlet,
     predict_multinomial,
+    predict_random_forest,
+    predict_xgboost,
     prepare_app_features_from_inputs,
     train_and_export,
 )
@@ -24,6 +30,9 @@ PAGE_TITLE = "Sales by Indication"
 MODEL_OPTIONS = {
     "Multinomial Logistic Regression": "multinomial",
     "ALR OLS Benchmark": "alr",
+    "Dirichlet Regression": "dirichlet",
+    "Random Forest": "random_forest",
+    "XGBoost": "xgboost",
 }
 INDICATION_COLORS = {"A": "#1E257F", "B": "#FF6A00", "C": "#2AA198"}
 
@@ -148,7 +157,15 @@ def get_demo_bundle() -> dict[str, Any]:
     train_and_export()
     multinomial_model, config = load_exported_artifacts()
     modeling_df = build_modeling_frame(config["data_path"])
-    alr_models = fit_alr_models(get_feature_frame(modeling_df), get_target_frame(modeling_df))
+
+    X_full = get_feature_frame(modeling_df)
+    y_full = get_target_frame(modeling_df)
+
+    alr_models = fit_alr_models(X_full, y_full)
+    dirichlet_model = fit_dirichlet_model(X_full, y_full)
+    rf_models = fit_random_forest_models(X_full, y_full)
+    xgb_models = fit_xgboost_models(X_full, y_full)
+
     default_raw_inputs = {
         "total_6m_sales": int(round(modeling_df["total_6m_sales"].median())),
         "touchpoints_a": int(round(modeling_df["total_touchpoints_a"].median())),
@@ -161,6 +178,9 @@ def get_demo_bundle() -> dict[str, Any]:
     return {
         "multinomial_model": multinomial_model,
         "alr_models": alr_models,
+        "dirichlet_model": dirichlet_model,
+        "rf_models": rf_models,
+        "xgb_models": xgb_models,
         "config": config,
         "modeling_df": modeling_df,
         "sales_cv_default": float(config["feature_ranges"]["sales_cv"]["median"]),
@@ -189,6 +209,12 @@ def predict_scenario(bundle: dict[str, Any], raw_inputs: dict[str, float], model
     features = build_model_inputs_from_raw_inputs(raw_inputs, bundle["sales_cv_default"])
     if model_key == "alr":
         prediction_df = predict_alr(bundle["alr_models"], features)
+    elif model_key == "dirichlet":
+        prediction_df = predict_dirichlet(bundle["dirichlet_model"], features)
+    elif model_key == "random_forest":
+        prediction_df = predict_random_forest(bundle["rf_models"], features)
+    elif model_key == "xgboost":
+        prediction_df = predict_xgboost(bundle["xgb_models"], features)
     else:
         prediction_df = predict_multinomial(bundle["multinomial_model"], features)
     return prediction_df.iloc[0]
