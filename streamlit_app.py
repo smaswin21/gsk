@@ -53,11 +53,11 @@ MODEL_DESCRIPTIONS: dict[str, str] = {
 }
 
 MODEL_TAGS: dict[str, str] = {
-    "multinomial": "⭐ Champion",
-    "alr": "Baseline",
-    "dirichlet": "Probabilistic",
+    "multinomial":   "Interpretable",
+    "alr":           "Baseline",
+    "dirichlet":     "Probabilistic",
     "random_forest": "Ensemble",
-    "xgboost": "Boosting",
+    "xgboost":       "Boosting",
 }
 
 INDICATION_COLORS = {
@@ -824,7 +824,7 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
         st.markdown(
             '<p style="font-size:0.75rem;color:rgba(127,127,127,0.6);line-height:1.4;">'
             'Model trained on synthetic GSK hospital sales data. '
-            'Champion: Weighted Multinomial Logistic Regression.</p>',
+            'Best model determined dynamically from holdout evaluation.</p>',
             unsafe_allow_html=True,
         )
 
