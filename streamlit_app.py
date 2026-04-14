@@ -265,6 +265,10 @@ def add_app_style() -> None:
                 border: 1.5px solid rgba(255,106,0,0.2);
                 border-radius: 16px;
                 padding: 1rem 1.1rem;
+                height: 220px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
             }
             .model-card .model-tag {
                 display: inline-block;
