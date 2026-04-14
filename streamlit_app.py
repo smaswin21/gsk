@@ -921,8 +921,18 @@ def render_overview(bundle: dict[str, Any]) -> None:
 
     col_chart, col_sel = st.columns([5, 1])
     with col_sel:
-        st.markdown("<div style='margin-top:0.3rem;'></div>", unsafe_allow_html=True)
-        ind_choice_overview = st.selectbox("Indication", ["A", "B", "C"], index=0, key="ind_overview")
+        st.markdown("<div style='height:2rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(127,127,127,0.7);margin-bottom:0.5rem;'>Indication</div>", unsafe_allow_html=True)
+        for ind_opt in ["A", "B", "C"]:
+            if st.button(
+                ind_opt,
+                key=f"ind_btn_{ind_opt}",
+                use_container_width=True,
+                type="primary" if st.session_state.get("ind_overview", "A") == ind_opt else "secondary",
+            ):
+                st.session_state["ind_overview"] = ind_opt
+                st.rerun()
+    ind_choice_overview = st.session_state.get("ind_overview", "A")
     with col_chart:
         st.plotly_chart(chart_touchpoints_vs_split(modeling_df, ind_choice_overview.lower()), use_container_width=True, theme="streamlit")
 
