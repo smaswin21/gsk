@@ -1216,25 +1216,26 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
                 st.rerun()
     selected_inds = st.session_state.get("de_dist_inds", ["A", "B", "C"])
     with col_dist:
+        labeled_dist = modeling_df.dropna(subset=["avg_split_a"]).copy()
+        labeled_dist = labeled_dist.sort_values("total_6m_sales").reset_index(drop=True)
         fig_dist = go.Figure()
         for ind in selected_inds:
             ind_l = ind.lower()
-            split_col = f"avg_split_{ind_l}"
-            labeled_dist = modeling_df.dropna(subset=[split_col]).copy()
-            estimated_sales = labeled_dist["total_6m_sales"] * labeled_dist[split_col]
-            fig_dist.add_trace(go.Histogram(
-                x=estimated_sales,
+            estimated = labeled_dist["total_6m_sales"] * labeled_dist[f"avg_split_{ind_l}"]
+            fig_dist.add_trace(go.Scatter(
+                x=labeled_dist["total_6m_sales"],
+                y=estimated,
                 name=f"Indication {ind}",
-                marker_color=INDICATION_COLORS[ind],
-                opacity=0.9,
-                nbinsx=25,
-                hovertemplate=f"<b>Indication {ind}</b><br>Est. Sales: %{{x:,.0f}}<br>Hospitals: %{{y}}<extra></extra>",
+                mode="lines",
+                stackgroup="one",
+                fillcolor=INDICATION_COLORS[ind],
+                line=dict(color=INDICATION_COLORS[ind], width=0.5),
+                hovertemplate=f"<b>Indication {ind}</b><br>Total Sales: %{{x:,.0f}}<br>Est. Split Sales: %{{y:,.0f}}<extra></extra>",
             ))
         fig_dist.update_layout(
-            title="Estimated sales distribution per indication (actual split × total sales)",
-            barmode="stack",
-            xaxis_title="Estimated Units",
-            yaxis_title="# Hospitals",
+            title="Estimated indication sales by hospital (sorted by total sales)",
+            xaxis_title="Total 6-month Sales (units)",
+            yaxis_title="Estimated Sales by Indication",
             showlegend=False,
         )
         st.plotly_chart(_theme(fig_dist, 320), use_container_width=True, theme="streamlit", key="de_sales_dist")
