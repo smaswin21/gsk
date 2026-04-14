@@ -761,11 +761,10 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
 
     with st.sidebar:
         # Brand
+        st.image("GSK_Logo_PNG5.png", width=140)
         st.markdown(
             """
             <div class="sidebar-brand">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/GlaxoSmithKline_logo.svg/2560px-GlaxoSmithKline_logo.svg.png"
-                style="width:140px;margin-bottom:0.4rem;filter:drop-shadow(0px 0px 1px rgba(255,106,0,0.3));">
                 <p class="sidebar-subtitle" style="font-size:1.05rem;font-weight:600;">Hospital Indication Split Model</p>
             </div>
             """,
