@@ -853,7 +853,7 @@ def render_overview(bundle: dict[str, Any]) -> None:
     modeling_df = bundle["modeling_df"]
     all_metrics = bundle["all_metrics"]
 
-    st.markdown('<p class="page-title">Hospital Sales by Indication</p>', unsafe_allow_html=True)
+    st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;">Hospital Sales by Indication</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p class="page-subtitle">Estimate how total hospital drug sales split across Indications A, B, and C '
         'using commercial activity signals and HCP reach data.</p>',
@@ -964,9 +964,9 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
     all_metrics = bundle["all_metrics"]
     raw         = st.session_state["submitted_raw_inputs"]
 
-    st.markdown('<p class="page-title">Model Comparison</p>', unsafe_allow_html=True)
+    st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;">Model Comparison</h1>', unsafe_allow_html=True)
     st.markdown(
-        '<p class="page-subtitle">Head-to-head performance of all five models on the hold-out test set '
+        '<p style="font-size:1.05rem;color:rgba(127,127,127,0.9);margin-bottom:1.4rem;">Head-to-head performance of all five models on the hold-out test set '
         'and side-by-side prediction output for the current hospital scenario.</p>',
         unsafe_allow_html=True,
     )
@@ -1064,7 +1064,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
     prediction     = predict_scenario(bundle, raw, model_key)
     total_sales    = raw["total_6m_sales"]
 
-    st.markdown('<p class="page-title">Prediction Calculator</p>', unsafe_allow_html=True)
+    st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;">Prediction Calculator</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p class="page-subtitle">Configure a hospital scenario in the sidebar and inspect the '
         'predicted indication split in real time.</p>',
@@ -1162,7 +1162,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
 def render_data_explorer(bundle: dict[str, Any]) -> None:
     modeling_df = bundle["modeling_df"]
 
-    st.markdown('<p class="page-title">Data Explorer</p>', unsafe_allow_html=True)
+    st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;">Data Explorer</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p class="page-subtitle">Explore the underlying hospital-level dataset used for training and evaluation.</p>',
         unsafe_allow_html=True,
