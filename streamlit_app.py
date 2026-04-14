@@ -771,6 +771,12 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
             unsafe_allow_html=True,
         )
 
+        st.markdown(
+            '<p style="font-size:0.75rem;color:rgba(127,127,127,0.6);line-height:1.4;margin-bottom:0.8rem;">'
+            '⚠️ All data in this app is fully synthetic and does not represent real patients, hospitals, or commercial activity.</p>',
+            unsafe_allow_html=True,
+        )
+
         # Navigation
         st.markdown('<div class="sidebar-section">Navigation</div>', unsafe_allow_html=True)
         page = st.session_state.get("page", PAGES[0])
