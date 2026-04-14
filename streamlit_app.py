@@ -1224,30 +1224,33 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
     with col_dist:
         labeled_dist = modeling_df.dropna(subset=["avg_split_a"]).copy()
         labeled_dist = labeled_dist.sort_values("total_6m_sales").reset_index(drop=True)
-        fig_dist = go.Figure()
-        for ind in ["A", "B", "C"]:
-            if ind not in selected_inds:
-                continue
-            ind_l = ind.lower()
-            estimated = labeled_dist["total_6m_sales"] * labeled_dist[f"avg_split_{ind_l}"]
-            fig_dist.add_trace(go.Bar(
-                x=estimated,
-                y=[f"H{i+1}" for i in range(len(labeled_dist))],
-                name=f"Indication {ind}",
-                orientation="h",
-                marker=dict(color=INDICATION_COLORS[ind], line=dict(width=0)),
-                hovertemplate=f"<b>Indication {ind}</b><br>Est. Sales: %{{x:,.0f}} units<extra></extra>",
-            ))
-        fig_dist.update_layout(
-            title="Estimated indication sales by hospital (sorted by total sales)",
-            xaxis_title="Estimated Sales (units)",
-            yaxis_title="Hospital (sorted by total sales)",
-            barmode="stack",
-            showlegend=True,
-            bargap=0,
-            yaxis=dict(showticklabels=False),
+        rows = []
+        for i, (_, row) in enumerate(labeled_dist.iterrows()):
+            for ind in selected_inds:
+                rows.append({
+                    "Hospital": f"Hospital {i+1}",
+                    "Indication": f"Indication {ind}",
+                    "Sales": row["total_6m_sales"] * row[f"avg_split_{ind.lower()}"],
+                })
+        treemap_df = pd.DataFrame(rows)
+        fig_dist = px.treemap(
+            treemap_df,
+            path=["Indication", "Hospital"],
+            values="Sales",
+            color="Indication",
+            color_discrete_map={
+                "Indication A": INDICATION_COLORS["A"],
+                "Indication B": INDICATION_COLORS["B"],
+                "Indication C": INDICATION_COLORS["C"],
+            },
+            title="Estimated indication sales by hospital",
         )
-        st.plotly_chart(_theme(fig_dist, 650), use_container_width=True, theme="streamlit", key="de_sales_dist")
+        fig_dist.update_traces(
+            textinfo="label+value",
+            hovertemplate="<b>%{label}</b><br>Est. Sales: %{value:,.0f} units<extra></extra>",
+        )
+        fig_dist.update_layout(margin=dict(t=50, l=10, r=10, b=10))
+        st.plotly_chart(_theme(fig_dist, 550), use_container_width=True, theme="streamlit", key="de_sales_dist")
 
     # ── HCP vs total sales ──
     st.markdown('<p class="section-title">Total HCPs vs total sales by indication</p>', unsafe_allow_html=True)
