@@ -765,14 +765,14 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
         st.markdown(
             """
             <div class="sidebar-brand">
-                <p class="sidebar-subtitle" style="font-size:1.05rem;font-weight:600;">Hospital Indication Split Model</p>
+                <p class="sidebar-subtitle" style="font-size:1.35rem;font-weight:900;color:var(--text-color);">Hospital Indication Split Model</p>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
         st.markdown(
-            '<p style="font-size:0.92rem;font-weight:600;color:#111111;line-height:1.4;margin-bottom:0.8rem;">'
+            '<p style="font-size:0.75rem;color:rgba(127,127,127,0.6);line-height:1.4;margin-bottom:0.8rem;">'
             '⚠️ All data in this app is fully synthetic and does not represent real patients, hospitals, or commercial activity.</p>',
             unsafe_allow_html=True,
         )
