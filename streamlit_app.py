@@ -1228,23 +1228,23 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
         for ind in selected_inds:
             ind_l = ind.lower()
             estimated = labeled_dist["total_6m_sales"] * labeled_dist[f"avg_split_{ind_l}"]
-            fig_dist.add_trace(go.Scatter(
-                x=labeled_dist["total_6m_sales"],
-                y=estimated,
+            fig_dist.add_trace(go.Bar(
+                x=estimated,
+                y=[f"H{i+1}" for i in range(len(labeled_dist))],
                 name=f"Indication {ind}",
-                mode="lines",
-                stackgroup="one",
-                fillcolor=INDICATION_COLORS[ind],
-                line=dict(color=INDICATION_COLORS[ind], width=0.5),
-                hovertemplate=f"<b>Indication {ind}</b><br>Total Sales: %{{x:,.0f}}<br>Est. Split Sales: %{{y:,.0f}}<extra></extra>",
+                orientation="h",
+                marker_color=INDICATION_COLORS[ind],
+                hovertemplate=f"<b>Indication {ind}</b><br>Est. Sales: %{{x:,.0f}} units<extra></extra>",
             ))
         fig_dist.update_layout(
             title="Estimated indication sales by hospital (sorted by total sales)",
-            xaxis_title="Total 6-month Sales (units)",
-            yaxis_title="Estimated Sales by Indication",
+            xaxis_title="Estimated Sales (units)",
+            yaxis_title="Hospital (sorted by total sales)",
+            barmode="stack",
             showlegend=True,
+            yaxis=dict(showticklabels=False),
         )
-        st.plotly_chart(_theme(fig_dist, 320), use_container_width=True, theme="streamlit", key="de_sales_dist")
+        st.plotly_chart(_theme(fig_dist, 420), use_container_width=True, theme="streamlit", key="de_sales_dist")
 
     # ── HCP vs total sales ──
     st.markdown('<p class="section-title">Total HCPs vs total sales by indication</p>', unsafe_allow_html=True)
