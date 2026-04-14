@@ -1199,21 +1199,25 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
     st.markdown('<p class="section-title">Sales distribution</p>', unsafe_allow_html=True)
     st.plotly_chart(chart_sales_distribution(modeling_df), use_container_width=True, theme="streamlit")
 
-    st.markdown('<p class="section-title">Touchpoints per HCP by indication</p>', unsafe_allow_html=True)
-    labeled_de = modeling_df.dropna(subset=["avg_split_a"]).copy()
-    fig_tp_hcp = go.Figure()
-    for ind in ["A", "B", "C"]:
-        fig_tp_hcp.add_trace(go.Box(
-            y=labeled_de[f"tp_per_hcp_{ind.lower()}"],
-            name=f"Indication {ind}",
-            marker_color=INDICATION_COLORS[ind],
-            boxmean=True,
-        ))
-    fig_tp_hcp.update_layout(
-        title="Touchpoints per HCP across indications — how intensively is each indication visited?",
-        yaxis_title="Touchpoints per HCP",
+    st.markdown('<p class="section-title">Total HCPs vs total sales by indication</p>', unsafe_allow_html=True)
+    ind_choice2 = st.selectbox("Indication", ["A", "B", "C"], index=0, key="de_hcp_ind")
+    ind_l2 = ind_choice2.lower()
+    labeled_de = modeling_df.dropna(subset=[f"avg_split_{ind_l2}"]).copy()
+    fig_hcp_sales = px.scatter(
+        labeled_de,
+        x=f"total_hcps_{ind_l2}",
+        y="total_6m_sales",
+        color=f"avg_split_{ind_l2}",
+        color_continuous_scale=["#e0e0e0", INDICATION_COLORS[ind_choice2]],
+        labels={
+            f"total_hcps_{ind_l2}": f"Total HCPs Visited — Ind. {ind_choice2}",
+            "total_6m_sales": "Total 6-month Sales (units)",
+            f"avg_split_{ind_l2}": f"Actual Split {ind_choice2}",
+        },
     )
-    st.plotly_chart(_theme(fig_tp_hcp, 360), use_container_width=True, theme="streamlit")
+    fig_hcp_sales.update_traces(marker=dict(size=8, opacity=0.75))
+    fig_hcp_sales.update_layout(title=f"Do more HCP visits correlate with higher total sales? — Indication {ind_choice2}")
+    st.plotly_chart(_theme(fig_hcp_sales, 360), use_container_width=True, theme="streamlit")
 
     # Average split distribution among labeled hospitals
     labeled = modeling_df.dropna(subset=["avg_split_a"]).copy()
