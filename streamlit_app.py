@@ -897,7 +897,7 @@ def render_overview(bundle: dict[str, Any]) -> None:
     with cols[0]:
         st.markdown(
             """<div style="background:rgba(255,106,0,0.06);border:1.5px solid rgba(255,106,0,0.25);
-            border-radius:18px;padding:1.4rem 1.5rem;height:100%;">
+            border-radius:18px;padding:1.4rem 1.5rem;min-height:220px;height:100%;box-sizing:border-box;">
             <div style="font-size:1.6rem;margin-bottom:0.5rem;">⚠️</div>
             <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;
             color:#FF6A00;margin-bottom:0.6rem;">The Challenge</div>
@@ -911,7 +911,7 @@ def render_overview(bundle: dict[str, Any]) -> None:
     with cols[1]:
         st.markdown(
             """<div style="background:rgba(30,37,127,0.06);border:1.5px solid rgba(30,37,127,0.2);
-            border-radius:18px;padding:1.4rem 1.5rem;height:100%;">
+            border-radius:18px;padding:1.4rem 1.5rem;min-height:220px;height:100%;box-sizing:border-box;">
             <div style="font-size:1.6rem;margin-bottom:0.5rem;">✅</div>
             <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;
             color:#1E257F;margin-bottom:0.6rem;">Our Solution</div>
