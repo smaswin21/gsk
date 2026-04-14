@@ -1206,7 +1206,16 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
         for ind_opt in ["A", "B", "C"]:
             hex_color = INDICATION_COLORS[ind_opt]
             is_on = ind_opt in current
-            if st.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, type="primary" if is_on else "secondary"):
+            st.markdown(f"""
+                <style>
+                div[data-testid="stButton"]:has(button[data-testid="baseButton-secondary"][key="de_dist_btn_{ind_opt}"]) button,
+                div[data-testid="stButton"]:has(button[key="de_dist_btn_{ind_opt}"]) button {{
+                    background: {''+hex_color if is_on else 'transparent'} !important;
+                    color: {'white' if is_on else hex_color} !important;
+                    border: 2px solid {hex_color} !important;
+                }}
+                </style>""", unsafe_allow_html=True)
+            if st.button(ind_opt, key=f"de_dist_btn_{ind_opt}", use_container_width=True, type="secondary"):
                 new = current.copy()
                 if is_on and len(current) > 1:
                     new.remove(ind_opt)
