@@ -899,18 +899,30 @@ def render_overview(bundle: dict[str, Any]) -> None:
     cols = st.columns(2)
     with cols[0]:
         st.markdown(
-            """<div class="card"><h3>Challenge</h3>
-            <p>Hospitals purchase <strong>one drug prescribed for multiple indications</strong>. 
+            """<div style="background:rgba(255,106,0,0.06);border:1.5px solid rgba(255,106,0,0.25);
+            border-radius:18px;padding:1.4rem 1.5rem;height:100%;">
+            <div style="font-size:1.6rem;margin-bottom:0.5rem;">⚠️</div>
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;
+            color:#FF6A00;margin-bottom:0.6rem;">The Challenge</div>
+            <p style="margin:0;line-height:1.6;font-size:0.95rem;">
+            Hospitals purchase <strong>one drug prescribed for multiple indications</strong>. 
             Purchase orders do not specify how much was used for <strong>Indication A, B, or C</strong>, 
-            making it impossible to assess <strong>commercial effectiveness by disease area</strong>.</p></div>""",
+            making it impossible to assess <strong>commercial effectiveness by disease area</strong>.</p>
+            </div>""",
             unsafe_allow_html=True,
         )
     with cols[1]:
         st.markdown(
-            """<div class="card"><h3>Solution</h3>
-            <p>We model the indication split using <strong>touchpoints and HCP reach</strong> broken down 
+            """<div style="background:rgba(30,37,127,0.06);border:1.5px solid rgba(30,37,127,0.2);
+            border-radius:18px;padding:1.4rem 1.5rem;height:100%;">
+            <div style="font-size:1.6rem;margin-bottom:0.5rem;">✅</div>
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;
+            color:#1E257F;margin-bottom:0.6rem;">Our Solution</div>
+            <p style="margin:0;line-height:1.6;font-size:0.95rem;">
+            We model the indication split using <strong>touchpoints and HCP reach</strong> broken down 
             by indication as predictors. <strong>Five models</strong> are compared on a held-out test set. 
-            <strong>Indication A dominates</strong> (~66% average share), making B and C harder to predict.</p></div>""",
+            <strong>Indication A dominates</strong> (~66% average share), making B and C harder to predict.</p>
+            </div>""",
             unsafe_allow_html=True,
         )
 
