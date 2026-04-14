@@ -1024,19 +1024,20 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
 
 
 def render_calculator(bundle: dict[str, Any]) -> None:
-    st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;">Prediction Calculator</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;margin-top:-2rem;">Prediction Calculator</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p style="font-size:1.05rem;color:rgba(127,127,127,0.9);margin-bottom:1.4rem;">'
-        'Configure a hospital scenario below and instantly see how sales split across indications.</p>',
+        'Configure a hospital scenario and instantly see how sales split across indications.</p>',
         unsafe_allow_html=True,
     )
 
-    # ── Inputs directly on the page ──
-    st.markdown('<p class="section-title">🏥 Hospital Scenario</p>', unsafe_allow_html=True)
+    # ── Two-column layout: inputs left, results right ──
+    left_col, right_col = st.columns([1, 1], gap="large")
 
-    with st.form("calculator_form_main"):
-        col_s, _ = st.columns([1, 2])
-        with col_s:
+    with left_col:
+        st.markdown('<p class="section-title">🏥 Hospital Inputs</p>', unsafe_allow_html=True)
+
+        with st.form("calculator_form_main"):
             total_6m_sales = st.number_input(
                 "Total 6-month sales (units)",
                 min_value=1, step=25,
@@ -1044,85 +1045,77 @@ def render_calculator(bundle: dict[str, Any]) -> None:
                 help="Total units purchased by the hospital over 6 months.",
             )
 
-        st.markdown("**Touchpoints by indication** — how many times the sales team contacted this hospital per indication")
-        c1, c2, c3 = st.columns(3)
-        touchpoints_a = c1.number_input("Indication A", min_value=0, step=5, value=int(st.session_state.get("touchpoints_a", bundle["default_raw_inputs"]["touchpoints_a"])), key="tp_a_main")
-        touchpoints_b = c2.number_input("Indication B", min_value=0, step=5, value=int(st.session_state.get("touchpoints_b", bundle["default_raw_inputs"]["touchpoints_b"])), key="tp_b_main")
-        touchpoints_c = c3.number_input("Indication C", min_value=0, step=5, value=int(st.session_state.get("touchpoints_c", bundle["default_raw_inputs"]["touchpoints_c"])), key="tp_c_main")
+            st.markdown("---")
+            st.markdown("**Touchpoints by indication**")
+            st.caption("How many times the sales team contacted this hospital per indication")
+            c1, c2, c3 = st.columns(3)
+            touchpoints_a = c1.number_input("Ind. A", min_value=0, step=5, value=int(st.session_state.get("touchpoints_a", bundle["default_raw_inputs"]["touchpoints_a"])), key="tp_a_main")
+            touchpoints_b = c2.number_input("Ind. B", min_value=0, step=5, value=int(st.session_state.get("touchpoints_b", bundle["default_raw_inputs"]["touchpoints_b"])), key="tp_b_main")
+            touchpoints_c = c3.number_input("Ind. C", min_value=0, step=5, value=int(st.session_state.get("touchpoints_c", bundle["default_raw_inputs"]["touchpoints_c"])), key="tp_c_main")
 
-        st.markdown("**HCPs reached by indication** — how many doctors at this hospital were contacted per indication")
-        c4, c5, c6 = st.columns(3)
-        hcps_a = c4.number_input("Indication A", min_value=0, step=5, value=int(st.session_state.get("hcps_a", bundle["default_raw_inputs"]["hcps_a"])), key="hcp_a_main")
-        hcps_b = c5.number_input("Indication B", min_value=0, step=5, value=int(st.session_state.get("hcps_b", bundle["default_raw_inputs"]["hcps_b"])), key="hcp_b_main")
-        hcps_c = c6.number_input("Indication C", min_value=0, step=5, value=int(st.session_state.get("hcps_c", bundle["default_raw_inputs"]["hcps_c"])), key="hcp_c_main")
+            st.markdown("**HCPs reached by indication**")
+            st.caption("How many doctors at this hospital were contacted per indication")
+            c4, c5, c6 = st.columns(3)
+            hcps_a = c4.number_input("Ind. A", min_value=0, step=5, value=int(st.session_state.get("hcps_a", bundle["default_raw_inputs"]["hcps_a"])), key="hcp_a_main")
+            hcps_b = c5.number_input("Ind. B", min_value=0, step=5, value=int(st.session_state.get("hcps_b", bundle["default_raw_inputs"]["hcps_b"])), key="hcp_b_main")
+            hcps_c = c6.number_input("Ind. C", min_value=0, step=5, value=int(st.session_state.get("hcps_c", bundle["default_raw_inputs"]["hcps_c"])), key="hcp_c_main")
 
-        st.markdown("**Model**")
-        model_label_calc = st.selectbox("Model", list(MODEL_OPTIONS.keys()), label_visibility="collapsed")
+            st.markdown("---")
+            st.markdown("**Model**")
+            model_label_calc = st.selectbox("Model", list(MODEL_OPTIONS.keys()), label_visibility="collapsed")
 
-        submitted = st.form_submit_button("▶ Run Prediction", use_container_width=True, type="primary")
+            submitted = st.form_submit_button("▶ Run Prediction", use_container_width=True, type="primary")
 
-    results_anchor = st.empty()
-    if submitted:
-        latest = {
-            "total_6m_sales": float(total_6m_sales),
-            "touchpoints_a":  float(touchpoints_a),
-            "touchpoints_b":  float(touchpoints_b),
-            "touchpoints_c":  float(touchpoints_c),
-            "hcps_a":         float(hcps_a),
-            "hcps_b":         float(hcps_b),
-            "hcps_c":         float(hcps_c),
-        }
-        st.session_state["submitted_raw_inputs"] = latest
-        st.session_state["submitted_model_key"]  = MODEL_OPTIONS[model_label_calc]
-        for k, v in latest.items():
-            st.session_state[k] = v
-        results_anchor.markdown(
-            '<div id="results"></div>'
-            '<script>document.getElementById("results").scrollIntoView({behavior:"smooth"});</script>',
-            unsafe_allow_html=True,
-        )
+        if submitted:
+            latest = {
+                "total_6m_sales": float(total_6m_sales),
+                "touchpoints_a":  float(touchpoints_a),
+                "touchpoints_b":  float(touchpoints_b),
+                "touchpoints_c":  float(touchpoints_c),
+                "hcps_a":         float(hcps_a),
+                "hcps_b":         float(hcps_b),
+                "hcps_c":         float(hcps_c),
+            }
+            st.session_state["submitted_raw_inputs"] = latest
+            st.session_state["submitted_model_key"]  = MODEL_OPTIONS[model_label_calc]
+            for k, v in latest.items():
+                st.session_state[k] = v
 
-    st.markdown("---")
+    # ── Results (always visible, updates on submit) ──
+    with right_col:
+        raw         = st.session_state["submitted_raw_inputs"]
+        model_key   = st.session_state.get("submitted_model_key", "multinomial")
+        model_label = next(lbl for lbl, k in MODEL_OPTIONS.items() if k == model_key)
+        prediction  = predict_scenario(bundle, raw, model_key)
+        total_sales = raw["total_6m_sales"]
+        tag         = MODEL_TAGS[model_key]
 
-    # ── Results ──
-    raw        = st.session_state["submitted_raw_inputs"]
-    model_key  = st.session_state.get("submitted_model_key", "multinomial")
-    model_label = next(lbl for lbl, k in MODEL_OPTIONS.items() if k == model_key)
-    prediction  = predict_scenario(bundle, raw, model_key)
-    total_sales = raw["total_6m_sales"]
-
-    tag  = MODEL_TAGS[model_key]
-    desc = MODEL_DESCRIPTIONS[model_key]
-    st.markdown(
-        f'<div class="note-banner"><strong>{tag} · {model_label}</strong><br>'
-        f'<span style="font-size:0.88rem;">{desc}</span></div>',
-        unsafe_allow_html=True,
-    )
-
-    st.markdown('<p class="section-title">📊 Predicted Indication Split</p>', unsafe_allow_html=True)
-    for ind in ["A", "B", "C"]:
-        pct   = prediction[f"pred_split_{ind.lower()}"] * 100
-        units = prediction[f"pred_split_{ind.lower()}"] * total_sales
-        color = INDICATION_COLORS[ind]
+        st.markdown('<p class="section-title">📊 Results</p>', unsafe_allow_html=True)
         st.markdown(
-            f"""<div class="pred-row">
-                <div class="pred-label" style="color:{color};">Indication {ind}</div>
-                <div class="pred-bar-wrap">
-                    <div class="pred-bar-fill" style="width:{pct:.1f}%;background:{color};"></div>
-                </div>
-                <div class="pred-pct" style="color:{color};">{pct:.1f}%</div>
-                <div style="font-size:0.85rem;color:rgba(127,127,127,0.75);min-width:6rem;text-align:right;">{units:,.0f} units</div>
-            </div>""",
+            f'<div class="note-banner" style="margin-bottom:1rem;"><strong>{tag} · {model_label}</strong></div>',
             unsafe_allow_html=True,
         )
 
-    c1, c2 = st.columns(2)
-    with c1:
-        st.plotly_chart(chart_units(prediction, total_sales), use_container_width=True, theme="streamlit")
-    with c2:
+        for ind in ["A", "B", "C"]:
+            pct   = prediction[f"pred_split_{ind.lower()}"] * 100
+            units = prediction[f"pred_split_{ind.lower()}"] * total_sales
+            color = INDICATION_COLORS[ind]
+            st.markdown(
+                f"""<div class="pred-row">
+                    <div class="pred-label" style="color:{color};">Indication {ind}</div>
+                    <div class="pred-bar-wrap">
+                        <div class="pred-bar-fill" style="width:{pct:.1f}%;background:{color};"></div>
+                    </div>
+                    <div class="pred-pct" style="color:{color};">{pct:.1f}%</div>
+                    <div style="font-size:0.85rem;color:rgba(127,127,127,0.75);min-width:5rem;text-align:right;">{units:,.0f} units</div>
+                </div>""",
+                unsafe_allow_html=True,
+            )
+
         st.plotly_chart(chart_mix(prediction), use_container_width=True, theme="streamlit")
 
-    st.markdown('<p class="section-title">⚡ Quick Comparison Across All Models</p>', unsafe_allow_html=True)
+    # ── All-model comparison below ──
+    st.markdown('<p class="section-title">⚡ All Models Comparison</p>', unsafe_allow_html=True)
     model_items = [
         ("Multinomial LR",   "multinomial",   "Multinomial LR"),
         ("ALR Benchmark",    "alr",           "ALR Benchmark"),
@@ -1136,17 +1129,19 @@ def render_calculator(bundle: dict[str, Any]) -> None:
         pred      = predict_scenario(bundle, raw, key)
         is_active = key == model_key
         border    = "border:2px solid #FF6A00;" if is_active else ""
+        mae       = all_metrics[metric_name]["mae"].mean()
         tile_html = (
-            f'<div class="kpi-tile" style="{border}">'
-            f'<div class="kpi-label">{short}</div>'
-            f'<div style="font-size:0.88rem;margin:0.4rem 0;line-height:1.8;">'
+            f'<div class="kpi-tile" style="{border}padding:1rem;">'
+            f'<div class="kpi-label" style="margin-bottom:0.4rem;">{short}</div>'
+            f'<div style="font-size:0.95rem;line-height:2;">'
             f'<span style="color:{INDICATION_COLORS["A"]};font-weight:700;">A {pred["pred_split_a"]*100:.0f}%</span><br>'
             f'<span style="color:{INDICATION_COLORS["B"]};font-weight:700;">B {pred["pred_split_b"]*100:.0f}%</span><br>'
             f'<span style="color:{INDICATION_COLORS["C"]};font-weight:700;">C {pred["pred_split_c"]*100:.0f}%</span>'
             f'</div>'
+            f'<div style="font-size:0.72rem;color:rgba(127,127,127,0.7);margin-top:0.5rem;border-top:1px solid rgba(127,127,127,0.1);padding-top:0.4rem;">MAE {mae:.4f}</div>'
         )
         if is_active:
-            tile_html += '<div style="font-size:0.75rem;color:#FF6A00;font-weight:700;margin-top:0.3rem;">Active</div>'
+            tile_html += '<div style="font-size:0.75rem;color:#FF6A00;font-weight:700;margin-top:0.2rem;">● Active</div>'
         tile_html += '</div>'
         col.markdown(tile_html, unsafe_allow_html=True)
 
