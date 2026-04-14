@@ -919,7 +919,8 @@ def render_overview(bundle: dict[str, Any]) -> None:
 
     st.plotly_chart(chart_sales_distribution(modeling_df), use_container_width=True, theme="streamlit")
 
-    st.plotly_chart(chart_touchpoints_vs_split(modeling_df, "a"), use_container_width=True, theme="streamlit")
+    ind_choice_overview = st.selectbox("Select indication", ["A", "B", "C"], index=0, key="ind_overview")
+    st.plotly_chart(chart_touchpoints_vs_split(modeling_df, ind_choice_overview.lower()), use_container_width=True, theme="streamlit")
 
     st.markdown(
         '<div class="note-banner">Positive coefficients push allocation toward that indication; '
