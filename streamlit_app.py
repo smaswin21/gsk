@@ -113,6 +113,7 @@ def add_app_style() -> None:
                     var(--background-color);
             }
             [data-testid="stHeader"] { background: transparent; }
+            .block-container { padding-top: 1rem !important; }
             [data-testid="stSidebar"] {
                 border-right: 1px solid rgba(127,127,127,0.14);
             }
@@ -849,7 +850,7 @@ def render_overview(bundle: dict[str, Any]) -> None:
     modeling_df = bundle["modeling_df"]
     all_metrics = bundle["all_metrics"]
 
-    st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;">Hospital Sales by Indication</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;margin-top:-2rem;">Hospital Sales by Indication</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p class="page-subtitle">Estimate how total hospital drug sales split across Indications A, B, and C '
         'using commercial activity signals and HCP reach data.</p>',
