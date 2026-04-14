@@ -1159,21 +1159,19 @@ def render_calculator(bundle: dict[str, Any]) -> None:
         pred      = predict_scenario(bundle, raw, key)
         is_active = key == model_key
         border    = "border:2px solid #FF6A00;" if is_active else ""
-        active_html = ""
-        if is_active:
-            active_html = "<div style='font-size:0.75rem;color:#FF6A00;font-weight:700;margin-top:0.3rem;'>&#9654; Active</div>"
-        col.markdown(
-            f"""<div class="kpi-tile" style="{border}">
-                <div class="kpi-label">{short}</div>
-                <div style="font-size:0.88rem;margin:0.4rem 0;line-height:1.8;">
-                    <span style="color:{INDICATION_COLORS['A']};font-weight:700;">A {pred['pred_split_a']*100:.0f}%</span><br>
-                    <span style="color:{INDICATION_COLORS['B']};font-weight:700;">B {pred['pred_split_b']*100:.0f}%</span><br>
-                    <span style="color:{INDICATION_COLORS['C']};font-weight:700;">C {pred['pred_split_c']*100:.0f}%</span>
-                </div>
-                {active_html}
-            </div>""",
-            unsafe_allow_html=True,
+        tile_html = (
+            f'<div class="kpi-tile" style="{border}">'
+            f'<div class="kpi-label">{short}</div>'
+            f'<div style="font-size:0.88rem;margin:0.4rem 0;line-height:1.8;">'
+            f'<span style="color:{INDICATION_COLORS["A"]};font-weight:700;">A {pred["pred_split_a"]*100:.0f}%</span><br>'
+            f'<span style="color:{INDICATION_COLORS["B"]};font-weight:700;">B {pred["pred_split_b"]*100:.0f}%</span><br>'
+            f'<span style="color:{INDICATION_COLORS["C"]};font-weight:700;">C {pred["pred_split_c"]*100:.0f}%</span>'
+            f'</div>'
         )
+        if is_active:
+            tile_html += '<div style="font-size:0.75rem;color:#FF6A00;font-weight:700;margin-top:0.3rem;">Active</div>'
+        tile_html += '</div>'
+        col.markdown(tile_html, unsafe_allow_html=True)
 
 
 def render_data_explorer(bundle: dict[str, Any]) -> None:
