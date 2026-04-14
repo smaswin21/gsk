@@ -926,7 +926,6 @@ def render_overview(bundle: dict[str, Any]) -> None:
     st.markdown('<p class="section-title">Sales distribution across hospitals</p>', unsafe_allow_html=True)
     st.plotly_chart(chart_sales_distribution(modeling_df), use_container_width=True, theme="streamlit")
 
-    st.markdown('<p class="section-title">Touchpoints share vs actual split — Indication A</p>', unsafe_allow_html=True)
     st.plotly_chart(chart_touchpoints_vs_split(modeling_df, "a"), use_container_width=True, theme="streamlit")
 
     st.markdown('<p class="section-title">Champion model — feature coefficients</p>', unsafe_allow_html=True)
