@@ -1231,7 +1231,7 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
         )
         fig_hcp_sales.update_traces(marker=dict(size=8, opacity=0.75))
         fig_hcp_sales.update_layout(title=f"Do more HCP visits correlate with higher total sales? — Indication {ind_choice2}")
-        st.plotly_chart(_theme(fig_hcp_sales, 360), use_container_width=True, theme="streamlit")
+        st.plotly_chart(_theme(fig_hcp_sales, 360), use_container_width=True, theme="streamlit", key=f"hcp_sales_{ind_choice2}")
     fig_hcp_sales = px.scatter(
         labeled_de,
         x=f"total_hcps_{ind_l2}",
