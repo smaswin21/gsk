@@ -343,6 +343,20 @@ def add_app_style() -> None:
             }
             .styled-table tr:last-child td { border-bottom: none; }
             .styled-table .best { font-weight: 700; color: #FF6A00; }
+        [data-testid="stRadio"] label {
+                font-size: 1rem !important;
+                font-weight: 600 !important;
+                padding: 0.55rem 0.6rem !important;
+                border-radius: 10px !important;
+                width: 100% !important;
+                cursor: pointer !important;
+            }
+            [data-testid="stRadio"] label:hover {
+                background: rgba(255,106,0,0.08) !important;
+            }
+            [data-testid="stRadio"] [aria-checked="true"] label {
+                color: #FF6A00 !important;
+            }
         </style>
         """,
         unsafe_allow_html=True,
@@ -756,6 +770,7 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
             PAGES,
             index=PAGES.index(st.session_state.get("page", PAGES[0])),
             label_visibility="collapsed",
+            captions=["KPIs & insights", "Compare all models", "Run predictions", "Raw data"],
         )
         st.session_state["page"] = page
 
