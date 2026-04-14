@@ -923,12 +923,10 @@ def render_overview(bundle: dict[str, Any]) -> None:
             unsafe_allow_html=True,
         )
 
-    st.markdown('<p class="section-title">Sales distribution across hospitals</p>', unsafe_allow_html=True)
     st.plotly_chart(chart_sales_distribution(modeling_df), use_container_width=True, theme="streamlit")
 
     st.plotly_chart(chart_touchpoints_vs_split(modeling_df, "a"), use_container_width=True, theme="streamlit")
 
-    st.markdown('<p class="section-title">Champion model — feature coefficients</p>', unsafe_allow_html=True)
     st.markdown(
         '<div class="note-banner">Positive coefficients push allocation toward that indication; '
         'negative coefficients pull away from it. The champion model is fully interpretable by design.</div>',
@@ -939,7 +937,7 @@ def render_overview(bundle: dict[str, Any]) -> None:
     # Top drivers table
     top_drivers = config.get("top_drivers", {})
     if top_drivers:
-        st.markdown('<p class="section-title">Top positive drivers per indication</p>', unsafe_allow_html=True)
+        st.markdown('<p style="font-size:1.4rem;font-weight:800;letter-spacing:-0.02em;margin:1.6rem 0 0.6rem;">Top positive drivers per indication</p>', unsafe_allow_html=True)
         d_cols = st.columns(3)
         for col, ind in zip(d_cols, ["A", "B", "C"]):
             pos = top_drivers.get(ind, {}).get("positive", {})
