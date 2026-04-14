@@ -642,11 +642,13 @@ def chart_radar(all_metrics: dict[str, pd.DataFrame]) -> go.Figure:
             name=name,
         ))
     fig.update_layout(
-        title="Model accuracy profile (higher = better per axis)",
+        title=dict(text="Model accuracy profile (higher = better per axis)", y=0.97),
         polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
         showlegend=True,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.15, xanchor="center", x=0.5),
+        margin=dict(l=40, r=40, t=80, b=80),
     )
-    return _theme(fig, 420)
+    return _theme(fig, 480)
 
 
 def chart_feature_importance(config: dict[str, Any]) -> go.Figure:
