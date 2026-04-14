@@ -83,7 +83,7 @@ FEATURE_LABELS: dict[str, str] = {
     "tp_per_hcp_c": "Touchpoints/HCP C",
 }
 
-PAGES = ["Overview", "Model Comparison", "Calculator", "Data Explorer"]
+PAGES = ["Overview", "Data Explorer", "Model Comparison", "Calculator"]
 
 # ---------------------------------------------------------------------------
 # Page config
