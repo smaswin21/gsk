@@ -764,8 +764,8 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
         st.markdown(
             """
             <div class="sidebar-brand">
-                <p class="sidebar-logo">GSK<span> · Sales Analytics</span></p>
-                <p class="sidebar-subtitle">Hospital Indication Split Model</p>
+                <p class="sidebar-logo" style="font-size:2.6rem;">GSK<span style="font-size:1.2rem;"> · Sales Analytics</span></p>
+                <p class="sidebar-subtitle" style="font-size:1.05rem;font-weight:600;">Hospital Indication Split Model</p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -794,6 +794,38 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
         st.session_state["page"] = page
 
         st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
+
+        st.markdown(
+            """
+            <div style="margin-top:0.5rem;">
+                <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;
+                color:rgba(127,127,127,0.6);margin-bottom:0.8rem;">Model Performance</div>
+                <div style="font-size:0.85rem;line-height:2;">
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="color:rgba(127,127,127,0.8);">🥇 XGBoost</span>
+                        <span style="color:#FF6A00;font-weight:700;">MAE 0.0933</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="color:rgba(127,127,127,0.8);">🥈 Random Forest</span>
+                        <span style="color:#FF6A00;font-weight:700;">MAE 0.0970</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="color:rgba(127,127,127,0.8);">🥉 Multinomial LR</span>
+                        <span style="color:#FF6A00;font-weight:700;">MAE 0.1300</span>
+                    </div>
+                </div>
+                <hr style="border:none;border-top:1px solid rgba(127,127,127,0.15);margin:0.8rem 0;">
+                <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;
+                color:rgba(127,127,127,0.6);margin-bottom:0.5rem;">Dataset</div>
+                <div style="font-size:0.85rem;line-height:2;color:rgba(127,127,127,0.8);">
+                    <div>🏥 100 hospitals</div>
+                    <div>📊 3 indications</div>
+                    <div>🤖 5 models compared</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     st.markdown(
             """<script>window.scrollTo({top: 0, behavior: 'smooth'});</script>""",
