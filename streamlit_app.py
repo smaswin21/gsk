@@ -765,13 +765,18 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
 
         # Navigation
         st.markdown('<div class="sidebar-section">Navigation</div>', unsafe_allow_html=True)
-        page = st.radio(
-            "Page",
-            PAGES,
-            index=PAGES.index(st.session_state.get("page", PAGES[0])),
-            label_visibility="collapsed",
-            captions=["KPIs & insights", "Compare all models", "Run predictions", "Raw data"],
-        )
+        page = st.session_state.get("page", PAGES[0])
+        for p in PAGES:
+            is_active = page == p
+            if st.button(
+                p,
+                key=f"nav_{p}",
+                use_container_width=True,
+                type="primary" if is_active else "secondary",
+            ):
+                st.session_state["page"] = p
+                page = p
+                st.rerun()
         st.session_state["page"] = page
 
         st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
