@@ -1199,13 +1199,22 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
     st.markdown('<p class="section-title">Sales distribution</p>', unsafe_allow_html=True)
     st.plotly_chart(chart_sales_distribution(modeling_df), use_container_width=True, theme="streamlit")
 
-    st.markdown('<p class="section-title">Touchpoints share vs actual split</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-title">HCP reach vs actual split</p>', unsafe_allow_html=True)
     ind_choice = st.selectbox("Indication", ["A", "B", "C"], index=0)
-    st.plotly_chart(
-        chart_touchpoints_vs_split(modeling_df, ind_choice.lower()),
-        use_container_width=True,
-        theme="streamlit",
+    ind_l = ind_choice.lower()
+    col_hcp = f"hcp_share_{ind_l}" if f"hcp_share_{ind_l}" in modeling_df.columns else f"total_hcps_{ind_l}"
+    col_sp  = f"avg_split_{ind_l}"
+    labeled_de = modeling_df[modeling_df[col_sp].notna()].copy()
+    fig_hcp = px.scatter(
+        labeled_de, x=col_hcp, y=col_sp,
+        color_discrete_sequence=[INDICATION_COLORS[ind_choice]],
+        labels={col_hcp: f"HCP Share — Ind. {ind_choice}", col_sp: f"Actual Sales Share — Ind. {ind_choice}"},
+        trendline="ols",
+        trendline_color_override="#1E257F",
     )
+    fig_hcp.update_traces(marker=dict(size=7, opacity=0.65))
+    fig_hcp.update_layout(title=f"HCP reach share vs actual sales split — Indication {ind_choice}")
+    st.plotly_chart(_theme(fig_hcp, 340), use_container_width=True, theme="streamlit")
 
     # Average split distribution among labeled hospitals
     labeled = modeling_df.dropna(subset=["avg_split_a"]).copy()
