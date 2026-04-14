@@ -1233,7 +1233,7 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
                 y=[f"H{i+1}" for i in range(len(labeled_dist))],
                 name=f"Indication {ind}",
                 orientation="h",
-                marker_color=INDICATION_COLORS[ind],
+                marker=dict(color=INDICATION_COLORS[ind], line=dict(width=0)),
                 hovertemplate=f"<b>Indication {ind}</b><br>Est. Sales: %{{x:,.0f}} units<extra></extra>",
             ))
         fig_dist.update_layout(
@@ -1244,7 +1244,7 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
             showlegend=True,
             yaxis=dict(showticklabels=False),
         )
-        st.plotly_chart(_theme(fig_dist, 420), use_container_width=True, theme="streamlit", key="de_sales_dist")
+        st.plotly_chart(_theme(fig_dist, 650), use_container_width=True, theme="streamlit", key="de_sales_dist")
 
     # ── HCP vs total sales ──
     st.markdown('<p class="section-title">Total HCPs vs total sales by indication</p>', unsafe_allow_html=True)
