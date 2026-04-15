@@ -368,6 +368,18 @@ def add_app_style() -> None:
                 color: #FF6A00 !important;
             }
 
+            /* Make number input stepper buttons always visible in narrow columns */
+            [data-testid="column"] [data-testid="stNumberInput"] [data-baseweb="input"] {
+                min-width: 80px !important;
+            }
+            [data-testid="column"] [data-testid="stNumberInput"] button[kind="stepDown"],
+            [data-testid="column"] [data-testid="stNumberInput"] button[kind="stepUp"] {
+                display: flex !important;
+                min-width: 24px !important;
+                width: 24px !important;
+                padding: 0 !important;
+            }
+
             /* Force number input stepper buttons to always show */
             [data-testid="stNumberInput"] > div {
                 min-width: 0 !important;
@@ -1084,14 +1096,14 @@ def render_calculator(bundle: dict[str, Any]) -> None:
             st.markdown("---")
             st.markdown("**Touchpoints by indication**")
             st.caption("How many times the sales team contacted this hospital per indication")
-            c1, c2, c3 = st.columns(3)
+            c1, c2, c3 = st.columns([1, 1, 1], gap="small")
             touchpoints_a = c1.number_input("Ind. A", min_value=0, step=1, value=int(st.session_state.get("touchpoints_a", bundle["default_raw_inputs"]["touchpoints_a"])), key="tp_a_main")
             touchpoints_b = c2.number_input("Ind. B", min_value=0, step=1, value=int(st.session_state.get("touchpoints_b", bundle["default_raw_inputs"]["touchpoints_b"])), key="tp_b_main")
             touchpoints_c = c3.number_input("Ind. C", min_value=0, step=1, value=int(st.session_state.get("touchpoints_c", bundle["default_raw_inputs"]["touchpoints_c"])), key="tp_c_main")
 
             st.markdown("**HCPs reached by indication**")
             st.caption("How many doctors at this hospital were contacted per indication")
-            c4, c5, c6 = st.columns(3)
+            c4, c5, c6 = st.columns([1, 1, 1], gap="small")
             hcps_a = c4.number_input("Ind. A", min_value=0, step=1, value=int(st.session_state.get("hcps_a", bundle["default_raw_inputs"]["hcps_a"])), key="hcp_a_main")
             hcps_b = c5.number_input("Ind. B", min_value=0, step=1, value=int(st.session_state.get("hcps_b", bundle["default_raw_inputs"]["hcps_b"])), key="hcp_b_main")
             hcps_c = c6.number_input("Ind. C", min_value=0, step=1, value=int(st.session_state.get("hcps_c", bundle["default_raw_inputs"]["hcps_c"])), key="hcp_c_main")
@@ -1153,7 +1165,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
 
         # Model + accuracy header
         st.markdown(
-            f'<div class="note-banner" style="margin-bottom:1rem;padding:1.2rem;min-height:auto;">'
+            f'<div class="note-banner" style="margin-bottom:1rem;padding:1.2rem 1.4rem;min-height:auto;border-radius:14px;">'
             f'<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">'
             f'<div><strong>{tag} · {model_label}</strong><br>'
             f'<span style="font-size:0.85rem;color:rgba(127,127,127,0.85);">Based on {int(total_sales):,} total units over 6 months</span></div>'
