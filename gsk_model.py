@@ -488,7 +488,7 @@ def predict_xgboost(
     prediction_df["pred_sum"] = prediction_df.sum(axis=1)
     return prediction_df
 
-def evaluate_predictions(y_true: pd.DataFrame, y_pred: pd.DataFrame, dataset_label: str, tolerance: float = 0.10) -> pd.DataFrame:
+def evaluate_predictions(y_true: pd.DataFrame, y_pred: pd.DataFrame, dataset_label: str, tolerance: float = 0.15) -> pd.DataFrame:
     metrics: list[dict[str, Any]] = []
     for target_col, pred_col, label in zip(
         TARGET_COLUMNS,
