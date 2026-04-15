@@ -1002,9 +1002,8 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
         ("XGBoost",         "xgboost",      "XGBoost"),
     ]
     def _render_model_card(col, metric_name, key, label):
-        mae      = all_metrics[metric_name]["mae"].mean()
-        rmse     = all_metrics[metric_name]["rmse"].mean()
-        accuracy = all_metrics[metric_name]["accuracy_pct"].mean() if "accuracy_pct" in all_metrics[metric_name].columns else None
+        mae  = all_metrics[metric_name]["mae"].mean()
+        rmse = all_metrics[metric_name]["rmse"].mean()
         tag  = MODEL_TAGS[key]
         desc = MODEL_DESCRIPTIONS[key]
         is_best = metric_name == best_name
@@ -1019,8 +1018,6 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
                          <br><strong style="color:#FF6A00;">{mae:.4f}</strong></div>
                     <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Avg RMSE</span>
                          <br><strong style="color:#1E257F;">{rmse:.4f}</strong></div>
-                    <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Accuracy</span>
-                         <br><strong style="color:#2AA198;">{f"{accuracy:.1f}%" if accuracy is not None else "N/A"}</strong></div>
                 </div>
             </div>""",
             unsafe_allow_html=True,
@@ -1153,7 +1150,6 @@ def render_calculator(bundle: dict[str, Any]) -> None:
         is_active = key == model_key
         border    = "border:2px solid #FF6A00;" if is_active else ""
         mae       = all_metrics[metric_name]["mae"].mean()
-        acc_str   = f'{all_metrics[metric_name]["accuracy_pct"].mean():.1f}%' if "accuracy_pct" in all_metrics[metric_name].columns else "N/A"
         tile_html = (
             f'<div class="kpi-tile" style="{border}padding:1rem;">'
             f'<div class="kpi-label" style="margin-bottom:0.4rem;">{short}</div>'
@@ -1162,7 +1158,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
             f'<span style="color:{INDICATION_COLORS["B"]};font-weight:700;">B {pred["pred_split_b"]*100:.0f}%</span><br>'
             f'<span style="color:{INDICATION_COLORS["C"]};font-weight:700;">C {pred["pred_split_c"]*100:.0f}%</span>'
             f'</div>'
-            f'<div style="font-size:0.72rem;color:rgba(127,127,127,0.7);margin-top:0.5rem;border-top:1px solid rgba(127,127,127,0.1);padding-top:0.4rem;">MAE {mae:.4f} · Acc {acc_str}</div>'
+            f'<div style="font-size:0.72rem;color:rgba(127,127,127,0.7);margin-top:0.5rem;border-top:1px solid rgba(127,127,127,0.1);padding-top:0.4rem;">MAE {mae:.4f}</div>'
         )
         if is_active:
             tile_html += '<div style="font-size:0.75rem;color:#FF6A00;font-weight:700;margin-top:0.2rem;">● Active</div>'
