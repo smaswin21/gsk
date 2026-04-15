@@ -488,13 +488,15 @@ def predict_xgboost(
     prediction_df["pred_sum"] = prediction_df.sum(axis=1)
     return prediction_df
 
-def evaluate_predictions(y_true: pd.DataFrame, y_pred: pd.DataFrame, dataset_label: str) -> pd.DataFrame:
+def evaluate_predictions(y_true: pd.DataFrame, y_pred: pd.DataFrame, dataset_label: str, tolerance: float = 0.10) -> pd.DataFrame:
     metrics: list[dict[str, Any]] = []
     for target_col, pred_col, label in zip(
         TARGET_COLUMNS,
         ["pred_split_a", "pred_split_b", "pred_split_c"],
         ["A", "B", "C"],
     ):
+        errors = np.abs(y_true[target_col].values - y_pred[pred_col].values)
+        accuracy = float((errors <= tolerance).mean() * 100)
         metrics.append(
             {
                 "dataset": dataset_label,
@@ -503,6 +505,7 @@ def evaluate_predictions(y_true: pd.DataFrame, y_pred: pd.DataFrame, dataset_lab
                 "rmse": float(
                     math.sqrt(mean_squared_error(y_true[target_col], y_pred[pred_col]))
                 ),
+                "accuracy_pct": round(accuracy, 1),
             }
         )
     return pd.DataFrame(metrics)
