@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import io
 import time
+from datetime import datetime
 from typing import Any
 
 import numpy as np
@@ -836,22 +838,6 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
 
 
 # ---------------------------------------------------------------------------
-# Shared UI helpers
-# ---------------------------------------------------------------------------
-
-def render_synthetic_disclaimer() -> None:
-    st.markdown(
-        """<div style="background:rgba(255,193,7,0.12);border:1.5px solid rgba(255,193,7,0.5);
-        border-left:5px solid #FFC107;border-radius:10px;padding:0.75rem 1rem;
-        margin-bottom:1.2rem;font-size:0.95rem;line-height:1.5;">
-        ⚠️ <strong>All data in this app is synthetic</strong> — it does not represent real patients,
-        hospitals, or commercial activity. For demonstration purposes only.
-        </div>""",
-        unsafe_allow_html=True,
-    )
-
-
-# ---------------------------------------------------------------------------
 # Page renderers
 # ---------------------------------------------------------------------------
 
@@ -860,7 +846,6 @@ def render_overview(bundle: dict[str, Any]) -> None:
     modeling_df = bundle["modeling_df"]
     all_metrics = bundle["all_metrics"]
 
-    render_synthetic_disclaimer()
     st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;margin-top:-2rem;">Hospital Sales by Indication</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p class="page-subtitle">Estimate how total hospital drug sales split across Indications A, B, and C '
@@ -993,7 +978,6 @@ def render_overview(bundle: dict[str, Any]) -> None:
 def render_model_comparison(bundle: dict[str, Any]) -> None:
     all_metrics = bundle["all_metrics"]
 
-    render_synthetic_disclaimer()
     st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;margin-top:-2rem;">Model Comparison</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p style="font-size:1.05rem;color:rgba(127,127,127,0.9);margin-bottom:1.4rem;">Head-to-head performance of all five models on the hold-out test set.</p>',
@@ -1061,7 +1045,6 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
 
 
 def render_calculator(bundle: dict[str, Any]) -> None:
-    render_synthetic_disclaimer()
     st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;margin-top:-2rem;">Prediction Calculator</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p style="font-size:1.05rem;color:rgba(127,127,127,0.9);margin-bottom:1.4rem;">'
@@ -1137,11 +1120,33 @@ def render_calculator(bundle: dict[str, Any]) -> None:
         prediction  = predict_scenario(bundle, raw, model_key)
         total_sales = raw["total_6m_sales"]
         tag         = MODEL_TAGS[model_key]
+        all_metrics = bundle["all_metrics"]
+
+        # Map model_key → all_metrics key
+        _metrics_key_map = {
+            "multinomial":   "Multinomial LR",
+            "alr":           "ALR Benchmark",
+            "dirichlet":     "Dirichlet",
+            "random_forest": "Random Forest",
+            "xgboost":       "XGBoost",
+        }
+        mae_val  = all_metrics[_metrics_key_map[model_key]]["mae"].mean()
+        rmse_val = all_metrics[_metrics_key_map[model_key]]["rmse"].mean()
+        accuracy = round((1 - mae_val) * 100)
 
         st.markdown('<p class="section-title">📊 Results</p>', unsafe_allow_html=True)
+
+        # Model + accuracy header
         st.markdown(
-            f'<div class="note-banner" style="margin-bottom:1rem;"><strong>{tag} · {model_label}</strong><br>'
-            f'<span style="font-size:0.85rem;color:rgba(127,127,127,0.85);">Based on {int(total_sales):,} total units over 6 months</span></div>',
+            f'<div class="note-banner" style="margin-bottom:1rem;">'
+            f'<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">'
+            f'<div><strong>{tag} · {model_label}</strong><br>'
+            f'<span style="font-size:0.85rem;color:rgba(127,127,127,0.85);">Based on {int(total_sales):,} total units over 6 months</span></div>'
+            f'<div style="text-align:right;">'
+            f'<div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:rgba(127,127,127,0.7);">Model accuracy</div>'
+            f'<div style="font-size:1.6rem;font-weight:900;color:#FF6A00;line-height:1.1;">{accuracy}%</div>'
+            f'<div style="font-size:0.75rem;color:rgba(127,127,127,0.65);">MAE {mae_val:.4f} · RMSE {rmse_val:.4f}</div>'
+            f'</div></div></div>',
             unsafe_allow_html=True,
         )
 
@@ -1162,6 +1167,33 @@ def render_calculator(bundle: dict[str, Any]) -> None:
             )
 
         st.plotly_chart(chart_mix(prediction), use_container_width=True, theme="streamlit")
+
+        # ── Save this result ──
+        if "calc_history" not in st.session_state:
+            st.session_state["calc_history"] = []
+
+        if st.button("💾 Save this result", use_container_width=True, type="secondary"):
+            entry = {
+                "Saved at":        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "Model":           model_label,
+                "Accuracy (%)":    accuracy,
+                "MAE":             round(mae_val, 4),
+                "Total sales":     int(total_sales),
+                "Touchpoints A":   int(raw["touchpoints_a"]),
+                "Touchpoints B":   int(raw["touchpoints_b"]),
+                "Touchpoints C":   int(raw["touchpoints_c"]),
+                "HCPs A":          int(raw["hcps_a"]),
+                "HCPs B":          int(raw["hcps_b"]),
+                "HCPs C":          int(raw["hcps_c"]),
+                "Split A (%)":     round(prediction["pred_split_a"] * 100, 1),
+                "Split B (%)":     round(prediction["pred_split_b"] * 100, 1),
+                "Split C (%)":     round(prediction["pred_split_c"] * 100, 1),
+                "Units A":         round(prediction["pred_split_a"] * total_sales),
+                "Units B":         round(prediction["pred_split_b"] * total_sales),
+                "Units C":         round(prediction["pred_split_c"] * total_sales),
+            }
+            st.session_state["calc_history"].append(entry)
+            st.success("Result saved — see the history table below.")
 
     # ── All-model comparison below ──
     st.markdown('<p class="section-title">⚡ All Models Comparison</p>', unsafe_allow_html=True)
@@ -1194,11 +1226,42 @@ def render_calculator(bundle: dict[str, Any]) -> None:
         tile_html += '</div>'
         col.markdown(tile_html, unsafe_allow_html=True)
 
+    # ── Saved results history ──
+    history = st.session_state.get("calc_history", [])
+    st.markdown("---")
+    hist_header, hist_clear = st.columns([5, 1])
+    hist_header.markdown('<p class="section-title">📋 Saved Results</p>', unsafe_allow_html=True)
+    if history:
+        if hist_clear.button("🗑 Clear", use_container_width=True, type="secondary"):
+            st.session_state["calc_history"] = []
+            st.rerun()
+
+        hist_df = pd.DataFrame(history)
+        st.dataframe(hist_df, use_container_width=True, hide_index=True)
+
+        # Excel download
+        buf = io.BytesIO()
+        with pd.ExcelWriter(buf, engine="openpyxl") as writer:
+            hist_df.to_excel(writer, index=False, sheet_name="Predictions")
+        buf.seek(0)
+        st.download_button(
+            label="⬇️ Download as Excel",
+            data=buf,
+            file_name=f"gsk_predictions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            type="primary",
+        )
+    else:
+        st.markdown(
+            '<p style="color:rgba(127,127,127,0.6);font-size:0.92rem;margin-top:0.3rem;">'
+            'No results saved yet. Run a prediction and click <strong>💾 Save this result</strong>.</p>',
+            unsafe_allow_html=True,
+        )
+
 
 def render_data_explorer(bundle: dict[str, Any]) -> None:
     modeling_df = bundle["modeling_df"]
 
-    render_synthetic_disclaimer()
     st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;">Data Explorer</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p class="page-subtitle">Explore the underlying hospital-level dataset used for training and evaluation.</p>',
