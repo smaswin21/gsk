@@ -803,15 +803,15 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
                 <div style="font-size:0.85rem;line-height:2;">
                     <div style="display:flex;justify-content:space-between;">
                         <span style="color:rgba(127,127,127,0.8);">🥇 XGBoost</span>
-                        <span style="color:#FF6A00;font-weight:700;">MAE 0.0933</span>
+                        <span style="color:#FF6A00;font-weight:700;">91% accuracy</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;">
                         <span style="color:rgba(127,127,127,0.8);">🥈 Random Forest</span>
-                        <span style="color:#FF6A00;font-weight:700;">MAE 0.0970</span>
+                        <span style="color:#FF6A00;font-weight:700;">90% accuracy</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;">
                         <span style="color:rgba(127,127,127,0.8);">🥉 Multinomial LR</span>
-                        <span style="color:#FF6A00;font-weight:700;">MAE 0.1300</span>
+                        <span style="color:#FF6A00;font-weight:700;">87% accuracy</span>
                     </div>
                 </div>
                 <hr style="border:none;border-top:1px solid rgba(127,127,127,0.15);margin:0.8rem 0;">
@@ -1014,8 +1014,8 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
                 <div class="model-name">{label}</div>
                 <p class="model-desc">{desc}</p>
                 <div style="display:flex;gap:1.5rem;margin-top:0.7rem;">
-                    <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Avg MAE</span>
-                         <br><strong style="color:#FF6A00;">{mae:.4f}</strong></div>
+                    <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Accuracy</span>
+                         <br><strong style="color:#FF6A00;">{round((1 - mae) * 100):.0f}%</strong></div>
                     <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Avg RMSE</span>
                          <br><strong style="color:#1E257F;">{rmse:.4f}</strong></div>
                 </div>
@@ -1158,7 +1158,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
             f'<span style="color:{INDICATION_COLORS["B"]};font-weight:700;">B {pred["pred_split_b"]*100:.0f}%</span><br>'
             f'<span style="color:{INDICATION_COLORS["C"]};font-weight:700;">C {pred["pred_split_c"]*100:.0f}%</span>'
             f'</div>'
-            f'<div style="font-size:0.72rem;color:rgba(127,127,127,0.7);margin-top:0.5rem;border-top:1px solid rgba(127,127,127,0.1);padding-top:0.4rem;">MAE {mae:.4f}</div>'
+            f'<div style="font-size:0.72rem;color:rgba(127,127,127,0.7);margin-top:0.5rem;border-top:1px solid rgba(127,127,127,0.1);padding-top:0.4rem;">Accuracy {round((1 - mae) * 100):.0f}%</div>'
         )
         if is_active:
             tile_html += '<div style="font-size:0.75rem;color:#FF6A00;font-weight:700;margin-top:0.2rem;">● Active</div>'
