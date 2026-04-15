@@ -1169,7 +1169,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
             f'<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">'
             f'<div><strong>{tag} · {model_label}</strong><br>'
             f'<span style="font-size:0.85rem;color:rgba(127,127,127,0.85);">Based on {int(total_sales):,} total units over 6 months</span></div>'
-            f'<div style="text-align:center;">'
+            f'<div style="text-align:center;width:100%;margin-top:0.6rem;">'
             f'<div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.07em;color:rgba(127,127,127,0.7);">Model accuracy</div>'
             f'<div style="font-size:1.6rem;font-weight:900;color:#FF6A00;line-height:1.1;">{accuracy}%</div>'
             f'<div style="font-size:0.75rem;color:rgba(127,127,127,0.65);">MAE {mae_val:.4f} · RMSE {rmse_val:.4f}</div>'
