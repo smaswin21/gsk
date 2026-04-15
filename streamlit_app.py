@@ -836,6 +836,22 @@ def render_sidebar(bundle: dict[str, Any]) -> tuple[str, str]:
 
 
 # ---------------------------------------------------------------------------
+# Shared UI helpers
+# ---------------------------------------------------------------------------
+
+def render_synthetic_disclaimer() -> None:
+    st.markdown(
+        """<div style="background:rgba(255,193,7,0.12);border:1.5px solid rgba(255,193,7,0.5);
+        border-left:5px solid #FFC107;border-radius:10px;padding:0.75rem 1rem;
+        margin-bottom:1.2rem;font-size:0.95rem;line-height:1.5;">
+        ⚠️ <strong>All data in this app is synthetic</strong> — it does not represent real patients,
+        hospitals, or commercial activity. For demonstration purposes only.
+        </div>""",
+        unsafe_allow_html=True,
+    )
+
+
+# ---------------------------------------------------------------------------
 # Page renderers
 # ---------------------------------------------------------------------------
 
@@ -844,6 +860,7 @@ def render_overview(bundle: dict[str, Any]) -> None:
     modeling_df = bundle["modeling_df"]
     all_metrics = bundle["all_metrics"]
 
+    render_synthetic_disclaimer()
     st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;margin-top:-2rem;">Hospital Sales by Indication</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p class="page-subtitle">Estimate how total hospital drug sales split across Indications A, B, and C '
@@ -947,6 +964,10 @@ def render_overview(bundle: dict[str, Any]) -> None:
     top_drivers = config.get("top_drivers", {})
     if top_drivers:
         st.markdown('<p style="font-size:1.4rem;font-weight:800;letter-spacing:-0.02em;margin:1.6rem 0 0.6rem;">Top positive drivers per indication</p>', unsafe_allow_html=True)
+        INDICATION_INSIGHTS: dict[str, str] = {
+            "B": "More B-focused touchpoints are the strongest lever to increase Indication B share.",
+            "C": "Increasing HCP reach for Indication C is the clearest untapped opportunity.",
+        }
         d_cols = st.columns(3)
         for col, ind in zip(d_cols, ["A", "B", "C"]):
             pos = top_drivers.get(ind, {}).get("positive", {})
@@ -961,11 +982,18 @@ def render_overview(bundle: dict[str, Any]) -> None:
                 </div>""",
                 unsafe_allow_html=True,
             )
+            if ind in INDICATION_INSIGHTS:
+                col.markdown(
+                    f'<p style="font-size:0.88rem;color:rgba(127,127,127,0.85);font-style:italic;'
+                    f'margin-top:0.5rem;line-height:1.5;">{INDICATION_INSIGHTS[ind]}</p>',
+                    unsafe_allow_html=True,
+                )
 
 
 def render_model_comparison(bundle: dict[str, Any]) -> None:
     all_metrics = bundle["all_metrics"]
 
+    render_synthetic_disclaimer()
     st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;margin-top:-2rem;">Model Comparison</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p style="font-size:1.05rem;color:rgba(127,127,127,0.9);margin-bottom:1.4rem;">Head-to-head performance of all five models on the hold-out test set.</p>',
@@ -1033,6 +1061,7 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
 
 
 def render_calculator(bundle: dict[str, Any]) -> None:
+    render_synthetic_disclaimer()
     st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;margin-top:-2rem;">Prediction Calculator</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p style="font-size:1.05rem;color:rgba(127,127,127,0.9);margin-bottom:1.4rem;">'
@@ -1169,6 +1198,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
 def render_data_explorer(bundle: dict[str, Any]) -> None:
     modeling_df = bundle["modeling_df"]
 
+    render_synthetic_disclaimer()
     st.markdown('<h1 style="font-size:2.5rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.2rem;">Data Explorer</h1>', unsafe_allow_html=True)
     st.markdown(
         '<p class="page-subtitle">Explore the underlying hospital-level dataset used for training and evaluation.</p>',
@@ -1245,6 +1275,74 @@ def render_data_explorer(bundle: dict[str, Any]) -> None:
             ))
         fig.update_layout(title="Distribution of actual indication splits (labeled hospitals)", yaxis_title="Share")
         st.plotly_chart(_theme(fig, 360), use_container_width=True, theme="streamlit")
+
+    # ── Hospital segmentation ──
+    st.markdown('<p class="section-title">Hospital segmentation for KAM prioritisation</p>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="note-banner">Hospitals are grouped by their dominant indication profile using actual '
+        'sales splits (labeled hospitals only). Use this to prioritise which accounts to visit for each indication.</div>',
+        unsafe_allow_html=True,
+    )
+    labeled_seg = modeling_df.dropna(subset=["avg_split_a", "avg_split_b", "avg_split_c"]).copy()
+    if not labeled_seg.empty:
+        labeled_seg["dominant_ind"] = labeled_seg[["avg_split_a", "avg_split_b", "avg_split_c"]].idxmax(axis=1).map(
+            {"avg_split_a": "A", "avg_split_b": "B", "avg_split_c": "C"}
+        )
+        seg_a = labeled_seg[labeled_seg["dominant_ind"] == "A"].index.tolist()
+        seg_b = labeled_seg[labeled_seg["dominant_ind"] == "B"].index.tolist()
+        seg_c = labeled_seg[labeled_seg["dominant_ind"] == "C"].index.tolist()
+
+        seg_col_a, seg_col_b, seg_col_c = st.columns(3)
+
+        def _seg_card(col, title, color, hospitals, split_col, description):
+            items_html = "".join(
+                f"<div style='display:flex;justify-content:space-between;padding:0.3rem 0;"
+                f"border-bottom:1px solid rgba(127,127,127,0.1);'>"
+                f"<span style='font-weight:600;'>Hospital {h}</span>"
+                f"<span style='color:{color};font-weight:700;'>"
+                f"{labeled_seg.loc[h, split_col]*100:.0f}% {title[-1]}</span></div>"
+                for h in hospitals[:10]
+            )
+            more = f"<div style='font-size:0.8rem;color:rgba(127,127,127,0.6);margin-top:0.4rem;'>…and {len(hospitals)-10} more</div>" if len(hospitals) > 10 else ""
+            col.markdown(
+                f"""<div style="background:var(--secondary-background-color);border:1.5px solid {color}33;
+                border-top:4px solid {color};border-radius:14px;padding:1.1rem 1.2rem;height:100%;box-sizing:border-box;">
+                <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;
+                color:{color};margin-bottom:0.3rem;">{title}</div>
+                <div style="font-size:0.85rem;color:rgba(127,127,127,0.8);margin-bottom:0.8rem;">{description}</div>
+                <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;
+                color:rgba(127,127,127,0.6);margin-bottom:0.4rem;">{len(hospitals)} hospitals</div>
+                <div style="max-height:280px;overflow-y:auto;">{items_html}{more}</div>
+                </div>""",
+                unsafe_allow_html=True,
+            )
+
+        _seg_card(
+            seg_col_a,
+            "A-Dominant Hospitals",
+            INDICATION_COLORS["A"],
+            seg_a,
+            "avg_split_a",
+            "Ind. A has the highest share — maintain current engagement.",
+        )
+        _seg_card(
+            seg_col_b,
+            "B-Opportunity Hospitals",
+            INDICATION_COLORS["B"],
+            seg_b,
+            "avg_split_b",
+            "Ind. B leads — prioritise B-focused touchpoints to grow share.",
+        )
+        _seg_card(
+            seg_col_c,
+            "C-Opportunity Hospitals",
+            INDICATION_COLORS["C"],
+            seg_c,
+            "avg_split_c",
+            "Ind. C leads — expand HCP reach to unlock C potential.",
+        )
+    else:
+        st.info("No labeled hospitals available for segmentation.")
 
     # ── Raw data table ──
     st.markdown('<p class="section-title">Raw data sample</p>', unsafe_allow_html=True)
