@@ -1153,6 +1153,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
         is_active = key == model_key
         border    = "border:2px solid #FF6A00;" if is_active else ""
         mae       = all_metrics[metric_name]["mae"].mean()
+        acc_str   = f'{all_metrics[metric_name]["accuracy_pct"].mean():.1f}%' if "accuracy_pct" in all_metrics[metric_name].columns else "N/A"
         tile_html = (
             f'<div class="kpi-tile" style="{border}padding:1rem;">'
             f'<div class="kpi-label" style="margin-bottom:0.4rem;">{short}</div>'
@@ -1161,7 +1162,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
             f'<span style="color:{INDICATION_COLORS["B"]};font-weight:700;">B {pred["pred_split_b"]*100:.0f}%</span><br>'
             f'<span style="color:{INDICATION_COLORS["C"]};font-weight:700;">C {pred["pred_split_c"]*100:.0f}%</span>'
             f'</div>'
-            f'<div style="font-size:0.72rem;color:rgba(127,127,127,0.7);margin-top:0.5rem;border-top:1px solid rgba(127,127,127,0.1);padding-top:0.4rem;">MAE {mae:.4f} · Acc {all_metrics[metric_name]["accuracy_pct"].mean():.1f}%</div>'
+            f'<div style="font-size:0.72rem;color:rgba(127,127,127,0.7);margin-top:0.5rem;border-top:1px solid rgba(127,127,127,0.1);padding-top:0.4rem;">MAE {mae:.4f} · Acc {acc_str}</div>'
         )
         if is_active:
             tile_html += '<div style="font-size:0.75rem;color:#FF6A00;font-weight:700;margin-top:0.2rem;">● Active</div>'
