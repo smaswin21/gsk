@@ -376,7 +376,7 @@ def add_app_style() -> None:
 # ---------------------------------------------------------------------------
 
 @st.cache_resource(show_spinner="Training models — this takes ~30 s on first load…")
-def get_demo_bundle() -> dict[str, Any]:
+def get_demo_bundle(version: int = 2) -> dict[str, Any]:
     train_and_export()
     multinomial_model, config = load_exported_artifacts()
     modeling_df = build_modeling_frame(config["data_path"])
