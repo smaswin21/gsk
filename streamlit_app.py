@@ -978,7 +978,7 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
     best_mae  = avg_maes[best_name]
     st.markdown(
         f'<div class="note-banner">🏆 <strong>Best model on hold-out: {best_name}</strong> '
-        f'— average MAE {best_mae:.4f} across all indications.</div>',
+        f'— average MAE {best_mae:.4f} · accuracy {all_metrics[best_name]["accuracy_pct"].mean():.1f}% (within 10pp) across all indications.</div>',
         unsafe_allow_html=True,
     )
 
@@ -1002,8 +1002,9 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
         ("XGBoost",         "xgboost",      "XGBoost"),
     ]
     def _render_model_card(col, metric_name, key, label):
-        mae  = all_metrics[metric_name]["mae"].mean()
-        rmse = all_metrics[metric_name]["rmse"].mean()
+        mae      = all_metrics[metric_name]["mae"].mean()
+        rmse     = all_metrics[metric_name]["rmse"].mean()
+        accuracy = all_metrics[metric_name]["accuracy_pct"].mean()
         tag  = MODEL_TAGS[key]
         desc = MODEL_DESCRIPTIONS[key]
         is_best = metric_name == best_name
@@ -1018,6 +1019,8 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
                          <br><strong style="color:#FF6A00;">{mae:.4f}</strong></div>
                     <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Avg RMSE</span>
                          <br><strong style="color:#1E257F;">{rmse:.4f}</strong></div>
+                    <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Accuracy</span>
+                         <br><strong style="color:#2AA198;">{accuracy:.1f}%</strong></div>
                 </div>
             </div>""",
             unsafe_allow_html=True,
@@ -1158,7 +1161,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
             f'<span style="color:{INDICATION_COLORS["B"]};font-weight:700;">B {pred["pred_split_b"]*100:.0f}%</span><br>'
             f'<span style="color:{INDICATION_COLORS["C"]};font-weight:700;">C {pred["pred_split_c"]*100:.0f}%</span>'
             f'</div>'
-            f'<div style="font-size:0.72rem;color:rgba(127,127,127,0.7);margin-top:0.5rem;border-top:1px solid rgba(127,127,127,0.1);padding-top:0.4rem;">MAE {mae:.4f}</div>'
+            f'<div style="font-size:0.72rem;color:rgba(127,127,127,0.7);margin-top:0.5rem;border-top:1px solid rgba(127,127,127,0.1);padding-top:0.4rem;">MAE {mae:.4f} · Acc {all_metrics[metric_name]["accuracy_pct"].mean():.1f}%</div>'
         )
         if is_active:
             tile_html += '<div style="font-size:0.75rem;color:#FF6A00;font-weight:700;margin-top:0.2rem;">● Active</div>'
