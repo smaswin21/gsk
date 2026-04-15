@@ -367,6 +367,21 @@ def add_app_style() -> None:
             [data-testid="stRadio"] [aria-checked="true"] label {
                 color: #FF6A00 !important;
             }
+
+            /* Force number input stepper buttons to always show */
+            [data-testid="stNumberInput"] > div {
+                min-width: 0 !important;
+            }
+            [data-testid="stNumberInput"] input {
+                min-width: 0 !important;
+                width: 100% !important;
+            }
+            [data-testid="stNumberInput"] button {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                flex-shrink: 0 !important;
+            }
         </style>
         """,
         unsafe_allow_html=True,
@@ -1138,7 +1153,7 @@ def render_calculator(bundle: dict[str, Any]) -> None:
 
         # Model + accuracy header
         st.markdown(
-            f'<div class="note-banner" style="margin-bottom:1rem;">'
+            f'<div class="note-banner" style="margin-bottom:1rem;padding:1.2rem;min-height:auto;">'
             f'<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">'
             f'<div><strong>{tag} · {model_label}</strong><br>'
             f'<span style="font-size:0.85rem;color:rgba(127,127,127,0.85);">Based on {int(total_sales):,} total units over 6 months</span></div>'
