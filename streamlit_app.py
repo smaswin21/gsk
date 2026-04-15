@@ -978,7 +978,7 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
     best_mae  = avg_maes[best_name]
     st.markdown(
         f'<div class="note-banner">🏆 <strong>Best model on hold-out: {best_name}</strong> '
-        f'— average MAE {best_mae:.4f} · accuracy {all_metrics[best_name]["accuracy_pct"].mean():.1f}% (within 10pp) across all indications.</div>',
+        f'— average MAE {best_mae:.4f} across all indications.</div>',
         unsafe_allow_html=True,
     )
 
@@ -1004,7 +1004,7 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
     def _render_model_card(col, metric_name, key, label):
         mae      = all_metrics[metric_name]["mae"].mean()
         rmse     = all_metrics[metric_name]["rmse"].mean()
-        accuracy = all_metrics[metric_name]["accuracy_pct"].mean()
+        accuracy = all_metrics[metric_name]["accuracy_pct"].mean() if "accuracy_pct" in all_metrics[metric_name].columns else None
         tag  = MODEL_TAGS[key]
         desc = MODEL_DESCRIPTIONS[key]
         is_best = metric_name == best_name
@@ -1020,7 +1020,7 @@ def render_model_comparison(bundle: dict[str, Any]) -> None:
                     <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Avg RMSE</span>
                          <br><strong style="color:#1E257F;">{rmse:.4f}</strong></div>
                     <div><span style="font-size:0.72rem;color:rgba(127,127,127,0.8);text-transform:uppercase;letter-spacing:.07em;">Accuracy</span>
-                         <br><strong style="color:#2AA198;">{accuracy:.1f}%</strong></div>
+                         <br><strong style="color:#2AA198;">{f"{accuracy:.1f}%" if accuracy is not None else "N/A"}</strong></div>
                 </div>
             </div>""",
             unsafe_allow_html=True,
